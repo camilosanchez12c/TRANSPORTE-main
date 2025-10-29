@@ -1,0 +1,290 @@
+{% load static %}
+
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'core/css/inicio.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inicio - TEN Transportes</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- 1) CSS CRÍTICO INLINE (solo header) — garantiza que el header quede correcto de inmediato -->
+  <style>
+    :root {
+      --teal: #274653;
+      --orange: #F0832A;
+      --header-h: 76px;
+    }
+
+    /* header base */
+    .main-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-h);
+      background: var(--teal);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+
+    .header-container {
+      width: 92%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .header-logo img {
+      height: 56px;
+      display: block
+    }
+
+    .header-nav {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center
+    }
+
+    .nav-menu {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 30px;
+      align-items: center
+    }
+
+    .nav-item {
+      display: inline-flex
+    }
+
+    .nav-link {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      padding: 8px 6px;
+      transition: color .18s ease;
+    }
+
+    .nav-link.active,
+    .nav-link:hover {
+      color: var(--orange)
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .btn-login {
+      color: #fff;
+      background: transparent;
+      border: 2px solid var(--orange);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .btn-login:hover {
+      background: var(--orange);
+      color: #fff
+    }
+
+    /* ensure no bullets */
+    .main-header ul,
+    .main-header li {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    /* push page content below header */
+    body {
+      padding-top: var(--header-h);
+      margin: 0;
+      font-family: Poppins, system-ui, sans-serif;
+      background: #f3f6f7;
+    }
+  </style>
+
+  <!-- 2) CSS externo completo (resto del sitio) -->
+  <link rel="stylesheet" href="{% static 'core/css/inicio.css' %}">
+</head>
+
+<body>
+  <!-- HEADER (usa el CSS inline de arriba) -->
+  <header class="main-header" role="banner" aria-label="Encabezado principal">
+    <div class="header-container">
+      <a class="header-logo" href="/" aria-label="TEN Transportes — inicio">
+        <img src="{% static 'core/img/logo.png' %}" alt="TEN Transportes">
+      </a>
+
+      <nav class="header-nav" role="navigation" aria-label="Menú principal">
+        <ul class="nav-menu">
+          <li class="nav-item"><a class="nav-link active" href="#">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Cómo Funciona</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Para Empresas</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Preguntas Frecuentes</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <a class="btn-login" href="#">INGRESAR</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-wrap">
+    <!-- HERO: imagen SOLO en esta sección -->
+    <section class="hero-banner" role="region" aria-label="Hero principal">
+      <div class="hero-inner container">
+        <div class="hero-left">
+          <h1 class="hero-title">
+            Formaliza y Centraliza tu<br>
+            Transporte Especial en Colombia
+          </h1>
+
+          <p class="hero-desc">
+            La plataforma digital que conecta clientes con empresas validadas, trazabilidad y cumplimiento normativo.
+          </p>
+
+          <div class="hero-ctas">
+            <a class="btn btn-primary" href="#">SOLICITAR MI SERVICIO AHORA</a>
+            <a class="btn btn-secondary" href="#">REGÍSTRATE COMO EMPRESA</a>
+          </div>
+        </div>
+
+        <div class="hero-right" aria-hidden="true">
+          <!-- CTA a la derecha (en el hero) -->
+          <a class="btn btn-side" href="#">CONOCE EL MÓDULO PARA EMPRESAS</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features-section" aria-label="Características">
+      <div class="features-box container">
+        <h2 class="section-title">Por qué elegir <strong>TEN Transportes</strong>?</h2>
+
+        <div class="features-grid">
+          <article class="feature">
+            <div class="feature-icon">
+              <!-- svg icon -->
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L3 5v6c0 5.5 3.9 10.7 9 12 5.1-1.3 9-6.5 9-12V5l-9-3z" stroke="#F0832A" stroke-width="1.2"
+                  stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+            <h3>Cumplimiento Normativo</h3>
+            <p>Documentación verificada y procesos estandarizados.</p>
+          </article>
+
+          <article class="feature">
+            <div class="feature-icon">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="9" stroke="#F0832A" stroke-width="1.2" />
+                <path d="M2 12h20M12 2v20" stroke="#F0832A" stroke-width="1.2" stroke-linecap="round" />
+              </svg>
+            </div>
+            <h3>Trazabilidad Total</h3>
+            <p>Seguimiento y registro completo de cada servicio.</p>
+          </article>
+
+          <article class="feature">
+            <div class="feature-icon">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="7" width="18" height="12" rx="1.5" stroke="#F0832A" stroke-width="1.2" />
+                <path d="M3 7l4-3h10l4 3" stroke="#F0832A" stroke-width="1.2" />
+              </svg>
+            </div>
+            <h3>Gestión Centralizada</h3>
+            <p>Contratos, facturación y documentos en una sola plataforma.</p>
+          </article>
+        </div>
+
+        <!-- STEPS -->
+        <div class="steps-row">
+          <div class="steps-intro">Tu viaje en 4 sencillos pasos</div>
+          <div class="steps-numbers">
+            <div class="step-block">
+              <div class="num">1</div>
+              <div class="label">Solicita</div>
+            </div>
+            <div class="step-block">
+              <div class="num">2</div>
+              <div class="label">Compara</div>
+            </div>
+            <div class="step-block">
+              <div class="num">3</div>
+              <div class="label">Contrata</div>
+            </div>
+            <div class="step-block">
+              <div class="num">4</div>
+              <div class="label">Viaja</div>
+            </div>
+          </div>
+
+          <div class="cta-strip">
+            <p>¿Eres una Empresa de Transporte Especial?</p>
+            <a class="btn btn-primary small" href="#">CONOCE EL MÓDULO PARA EMPRESAS</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="site-footer" role="contentinfo">
+      <div class="container footer-inner">
+        <div class="footer-left">
+          <div class="footer-title">Información Legal</div>
+          <nav class="footer-links">
+            <a href="#">Términos y Condiciones</a>
+            <a href="#">Política de Privacidad</a>
+          </nav>
+        </div>
+
+        <div class="footer-center">
+          <div class="footer-contact">Contacto</div>
+          <div class="footer-small">soporte@tentransportes.co · +57 300 000 0000</div>
+        </div>
+
+        <div class="footer-right">
+          <a class="btn footer-cta" href="#">CONOCE EL MÓDULO PARA EMPRESAS</a>
+          <div class="socials">
+            <a href="https://twitter.com" target="_blank" class="social-link" aria-label="Twitter">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="https://facebook.com" target="_blank" class="social-link" aria-label="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="https://instagram.com" target="_blank" class="social-link" aria-label="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </footer>
+
+  </main>
+  {% endblock %}
+
+  {% block extra_scripts %}
+  <!-- no scripts necesarios para el header / hero -->
+  {% endblock %}

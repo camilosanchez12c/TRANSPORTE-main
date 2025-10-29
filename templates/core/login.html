@@ -1,0 +1,93 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block extra_head %}
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'core/css/login.css' %}">
+{% endblock %}
+
+{% block title %}Inicia Sesión{% endblock %}
+
+{% block content %}
+<div class="login-outer">
+  <div class="login-hero" aria-hidden="true"></div>
+
+  <div class="auth-wrapper">
+    <section class="auth-card" aria-labelledby="auth-title">
+      <h1 id="auth-title" class="auth-title">Inicia Sesión</h1>
+
+      <!-- role tabs: tabindex para focus, aria-selected para accesibilidad -->
+      <ul class="role-tabs" role="tablist" aria-label="Tipo de usuario">
+        <li class="role-tab active" role="tab" tabindex="0" aria-selected="true" data-role="cliente">Cliente</li>
+        <li class="role-tab" role="tab" tabindex="0" aria-selected="false" data-role="empresa">Empresa</li>
+        <li class="role-tab" role="tab" tabindex="0" aria-selected="false" data-role="operador">Operador</li>
+        <li class="role-tab" role="tab" tabindex="0" aria-selected="false" data-role="administrador">Administrador</li>
+      </ul>
+
+      <form method="post" action="{% url 'login' %}" class="auth-form" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="role" id="role-input" value="cliente">
+
+        <input class="form-control form-input" name="username" type="email" placeholder="Email" required autocomplete="username">
+        <input class="form-control form-input" name="password" type="password" placeholder="Contraseña" required autocomplete="current-password">
+
+        <label class="checkbox-label">
+          <input class="form-check-input" type="checkbox" name="remember">
+          <span>Recordarme</span>
+        </label>
+
+        <div class="btn-wrap">
+          <button type="submit" class="btn-submit">INGRESAR</button>
+        </div>
+
+        <a class="forgot-link" href="{% url 'password_reset' %}">¿Olvidaste tu contraseña?</a>
+        <p class="register-line">¿No tienes cuenta? <a href="{% url 'register' %}">Regístrate aquí</a></p>
+      </form>
+    </section>
+  </div>
+</div>
+
+<!-- scripts: manejan selección, keyboard nav (left/right/enter/space) y aria -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const tabs = Array.from(document.querySelectorAll('.role-tab'));
+  const roleInput = document.getElementById('role-input');
+
+  function activateTab(tab) {
+    tabs.forEach(t => {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected','false');
+    });
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected','true');
+    if (roleInput) roleInput.value = tab.dataset.role;
+    tab.focus();
+  }
+
+  tabs.forEach((tab, idx) => {
+    // click
+    tab.addEventListener('click', function () { activateTab(this); });
+
+    // keyboard: Enter / Space -> activate
+    tab.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        activateTab(this);
+      } else if (e.key === 'ArrowRight' || e.key === 'Right') {
+        e.preventDefault();
+        const next = tabs[(idx + 1) % tabs.length];
+        next.focus();
+      } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+        e.preventDefault();
+        const prev = tabs[(idx - 1 + tabs.length) % tabs.length];
+        prev.focus();
+      }
+    });
+
+    // visual focus class for keyboard-only users
+    tab.addEventListener('focus', function () { this.classList.add('focus-visible'); });
+    tab.addEventListener('blur',  function () { this.classList.remove('focus-visible'); });
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,141 @@
+/* login.css — añade las micro-interacciones (hover, focus, active) */
+
+/* variables */
+:root{
+  --accent:#f37c21;
+  --nav-blue:#254a55;
+  --card-bg: rgba(255,255,255,0.98);
+  --muted:#6b7a82;
+  --text:#21313a;
+}
+
+/* (mantén el resto de estilos previos) */
+.login-outer{ width:100%; max-width:1200px; margin:0 auto; position:relative; display:flex; justify-content:center; align-items:center; padding:12px; }
+.login-hero{ position:absolute; inset:0; z-index:0; pointer-events:none; background: linear-gradient(180deg, rgba(250,250,250,0.85), rgba(240,245,247,0.85)); background-size:cover; background-position:center; filter: blur(1.6px) brightness(0.95); }
+
+.auth-wrapper{ position:relative; z-index:2; width:100%; display:flex; justify-content:center; align-items:center; padding:8px; }
+.auth-card{ width:820px; max-width:95%; background: var(--card-bg); border-radius:12px; padding:44px 56px; text-align:center; box-shadow: 0 18px 40px rgba(20,30,40,0.10); border:1px solid rgba(34,54,60,0.06); backdrop-filter: blur(3px); position:relative; overflow:hidden; }
+.auth-card::before{ content:""; position:absolute; z-index:1; left:-8%; right:-8%; top:-14%; bottom:-14%; background: radial-gradient(ellipse at center, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.66) 36%, rgba(255,255,255,0.22) 70%, transparent 100%); filter: blur(5px); pointer-events:none; }
+
+.auth-title{ margin:0 0 18px; font-size:34px; font-weight:700; color:var(--nav-blue); }
+
+/* -------------------------
+   ROLE TABS (interactivos)
+   ------------------------- */
+.role-tabs{
+  list-style:none;
+  display:flex;
+  gap:18px;
+  justify-content:center;
+  margin:0 0 20px;
+  padding:0;
+  z-index:3;
+}
+.role-tab{
+  position:relative;
+  padding:8px 14px;
+  border-radius:8px;
+  color:var(--muted);
+  font-weight:600;
+  cursor:pointer;
+  border:2px solid transparent;
+  background:transparent;
+  transition: all 200ms cubic-bezier(.2,.9,.2,1);
+  outline: none;
+}
+
+/* hover: realce suave y sombra */
+.role-tab:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  color: color-mix(in srgb, var(--nav-blue) 20%, var(--muted));
+}
+
+/* focus-visible (cuando navegas con teclado) */
+.role-tab.focus-visible{
+  box-shadow: 0 0 0 4px rgba(243,124,33,0.12);
+}
+
+/* ESTILO activo: recuadro zapote (borde + glow) */
+.role-tab.active{
+  color:var(--accent);
+  border-color: var(--accent);
+  background: rgba(243,124,33,0.04);
+  box-shadow: 0 8px 20px rgba(243,124,33,0.12);
+}
+
+/* pseudo-recuadro visual extra (opcional) — bordes interiores más marcados */
+.role-tab.active::after{
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 10px;
+  pointer-events: none;
+  box-shadow: 0 6px 18px rgba(243,124,33,0.08) inset;
+  opacity: 1;
+  transition: opacity 220ms;
+}
+
+/* -------------------------
+   FORM INTERACTIONS
+   ------------------------- */
+.auth-form{ display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:6px; z-index:2; }
+.form-input{ width:100%; max-width:520px; height:46px; padding:10px 14px; border-radius:6px; border:1px solid rgba(30,40,45,0.08); background:#fff; font-size:15px; transition: box-shadow 160ms, border-color 160ms; }
+.form-input:focus{
+  border-color: rgba(243,124,33,0.65);
+  box-shadow: 0 8px 30px rgba(243,124,33,0.06);
+}
+
+/* checkbox */
+.checkbox-label{ display:flex; align-items:center; gap:10px; width:100%; max-width:520px; color:var(--muted); justify-content:flex-start; font-size:15px; margin-top:6px; }
+
+/* button interactions */
+.btn-wrap{ width:100%; display:flex; justify-content:center; margin-top:6px; }
+.btn-submit{
+  width:240px;
+  height:48px;
+  border-radius:8px;
+  border:none;
+  background: linear-gradient(180deg,#ff9a49,#f37c21);
+  color:#fff;
+  font-weight:700;
+  font-size:16px;
+  box-shadow: 0 10px 26px rgba(243,124,33,0.14);
+  cursor:pointer;
+  transition: transform 160ms cubic-bezier(.2,.9,.2,1), box-shadow 160ms, filter 160ms;
+}
+
+/* hover */
+.btn-submit:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 18px 36px rgba(243,124,33,0.18);
+  filter: brightness(1.03);
+}
+
+/* focus */
+.btn-submit:focus{
+  outline: none;
+  box-shadow: 0 0 0 6px rgba(243,124,33,0.10);
+}
+
+/* active (presionado) */
+.btn-submit:active{
+  transform: translateY(-1px) scale(0.998);
+  box-shadow: 0 8px 20px rgba(243,124,33,0.12);
+}
+
+/* Links */
+.forgot-link{ display:block; margin-top:18px; color:var(--nav-blue); text-decoration:underline; font-size:15px; }
+.register-line{ margin-top:12px; color:var(--muted); font-size:14px; }
+.register-line a{ color:var(--accent); text-decoration:none; font-weight:600; }
+
+/* responsive */
+@media (max-width:920px){
+  .auth-card{ padding:32px 24px; width:92%; }
+  .auth-title{ font-size:28px; }
+}
+@media (max-width:520px){
+  .auth-card{ padding:20px 16px; border-radius:10px; width:94%; }
+  .btn-submit{ width:100%; max-width:420px; }
+  .role-tabs{ gap:12px; flex-wrap:wrap; }
+}

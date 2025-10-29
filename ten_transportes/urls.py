@@ -1,21 +1,62 @@
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from solicitudes.views import SolicitudViewSet, OfertaViewSet
-from documentos.views import DocumentoViewSet
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from django.conf import settings
-from django.conf.urls.static import static
+from django.views.generic import TemplateView
+from django.contrib.auth import views as auth_views
+from django.views.generic.edit import CreateView
+from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse_lazy
 
-router = DefaultRouter()
-router.register(r'solicitudes', SolicitudViewSet, basename='solicitud')
-router.register(r'ofertas', OfertaViewSet, basename='oferta')
-router.register(r'documentos', DocumentoViewSet, basename='documento')
-#urls para ingresar con las direcciones en la pagina 
 urlpatterns = [
+    # Panel de administración
     path('admin/', admin.site.urls),
-    path('api/auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/', include(router.urls)),
-    path('api/base/', include('base.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    # Página de inicio
+    path('', TemplateView.as_view(template_name='core/inicio.html'), name='inicio'),
+
+    # Páginas específicas
+    path('cliente/', TemplateView.as_view(template_name='core/cliente.html'), name='cliente'),
+    path('operador/', TemplateView.as_view(template_name='core/operador.html'), name='operador'),
+    path('empresa/', TemplateView.as_view(template_name='core/empresa.html'), name='empresa'),
+    path('administrador/', TemplateView.as_view(template_name='core/administrador.html'), name='administrador'),
+
+    # Login y Logout (personalizados)
+    path(
+        'accounts/login/',
+        auth_views.LoginView.as_view(template_name='core/login.html'),
+        name='login'
+    ),
+    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
+
+    # Registro de usuarios (para resolver el error de 'register')
+    path(
+        'accounts/register/',
+        CreateView.as_view(
+            template_name='core/register.html',
+            form_class=UserCreationForm,
+            success_url=reverse_lazy('login')
+        ),
+        name='register'
+    ),
+
+    # Rutas de restablecimiento de contraseña
+    path(
+        'accounts/password_reset/',
+        auth_views.PasswordResetView.as_view(template_name='core/password_reset_form.html'),
+        name='password_reset'
+    ),
+    path(
+        'accounts/password_reset/done/',
+        auth_views.PasswordResetDoneView.as_view(template_name='core/password_reset_done.html'),
+        name='password_reset_done'
+    ),
+    path(
+        'accounts/reset/<uidb64>/<token>/',
+        auth_views.PasswordResetConfirmView.as_view(template_name='core/password_reset_confirm.html'),
+        name='password_reset_confirm'
+    ),
+    path(
+        'accounts/reset/done/',
+        auth_views.PasswordResetCompleteView.as_view(template_name='core/password_reset_complete.html'),
+        name='password_reset_complete'
+    ),
+]

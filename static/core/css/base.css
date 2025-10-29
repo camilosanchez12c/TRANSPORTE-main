@@ -1,0 +1,101 @@
+/* base.css — header y footer fijos, main entre ellos, sin espacios sobrantes */
+
+/* Variables */
+:root{
+  --nav-blue:#254a55;
+  --bg:#eef3f5;
+  --content-max:1400px;
+  --header-h:72px;   /* ajusta si quieres header más alto/bajo */
+  --footer-h:64px;
+  --font: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Reset y base */
+*{box-sizing:border-box}
+html,body{height:100%; margin:0; font-family:var(--font); background:var(--bg); -webkit-font-smoothing:antialiased;}
+
+/* HEADER: fijo y visible */
+.site-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:var(--header-h);
+  background:var(--nav-blue);
+  color:#fff;
+  z-index:2200; /* muy arriba para que siempre se vea */
+  display:flex;
+  align-items:center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  padding: 0 16px;
+}
+.header-inner{
+  width:100%;
+  max-width:var(--content-max);
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.brand-logo{
+  height:52px;
+  width:auto;
+  object-fit:contain;
+  display:block;
+  border-radius:6px;
+}
+.header-nav .nav-link{
+  color:#fff;
+  font-weight:600;
+  text-decoration:none;
+}
+
+/* MAIN: ocupa todo el alto restante y centra su contenido */
+.site-main{
+  min-height: calc(100vh - var(--header-h) - var(--footer-h));
+  height: calc(100vh - var(--header-h) - var(--footer-h));
+  padding: 0; /* quitamos paddings verticales que dejaban huecos */
+  display:flex;
+  align-items:center;      /* CENTRA verticalmente */
+  justify-content:center;  /* CENTRA horizontalmente */
+  width:100%;
+  box-sizing:border-box;
+}
+
+/* FOOTER: fijo abajo y visible */
+.site-footer{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  height:var(--footer-h);
+  background:var(--nav-blue);
+  color:#fff;
+  z-index:2200;
+  display:flex;
+  align-items:center;
+  box-shadow: 0 -3px 10px rgba(0,0,0,0.12);
+  padding: 0 16px;
+}
+.footer-inner{
+  width:100%;
+  max-width:var(--content-max);
+  margin:0 auto;
+  display:flex;
+  justify-content:center;
+  gap:48px;
+  align-items:center;
+}
+.footer-link{ color:#fff; text-decoration:none; font-weight:500; }
+
+/* Responsiveness */
+@media (max-width:768px){
+  :root{
+    --header-h:64px;
+    --footer-h:64px;
+  }
+  .brand-logo{ height:44px; }
+  .header-inner{ padding:0 12px; }
+  .footer-inner{ gap:20px; padding:0 12px; }
+  .site-main{ padding:0; }
+}

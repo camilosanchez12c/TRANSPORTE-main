@@ -1,0 +1,144 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Panel Administrador{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'core/css/administrador.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="admin-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="{% static 'core/img/logo.png' %}" alt="Logo">
+    </div>
+    <nav class="menu">
+      <a href="#" class="menu-item active"><i class="icon">🏠</i> Inicio</a>
+      <a href="#" class="menu-item"><i class="icon">📄</i> Validación Documental</a>
+      <a href="#" class="menu-item"><i class="icon">🏢</i> Empresas</a>
+      <a href="#" class="menu-item"><i class="icon">👷</i> Operadores</a>
+      <a href="#" class="menu-item"><i class="icon">🚗</i> Vehículos</a>
+      <a href="#" class="menu-item"><i class="icon">📝</i> Solicitudes</a>
+      <a href="#" class="menu-item"><i class="icon">⚙️</i> Configuración</a>
+    </nav>
+  </aside>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <header class="top-bar">
+      <div class="top-links">
+        <a href="#">Empresas</a>
+        <a href="#">Cómo Funcionamos</a>
+        <a href="#">Para Empresas</a>
+      </div>
+      <button class="btn-login">INGRESAR</button>
+    </header>
+
+    <section class="dashboard">
+      <!-- Tarjetas principales -->
+      <div class="cards">
+        <div class="card">
+          <h2>17</h2>
+          <p>Validaciones</p>
+          <span>Validaciones Pendientes (17)</span>
+        </div>
+        <div class="card">
+          <h2>125</h2>
+          <p>Empresas Registradas</p>
+          <span>50 Servicios Activos Hoy</span>
+        </div>
+        <div class="card">
+          <h2>48</h2>
+          <p>Servicios Registrados</p>
+          <button class="btn-secondary">REGÍSTRATE COMO EMPRESA</button>
+        </div>
+      </div>
+
+      <!-- Accesos rápidos -->
+      <div class="quick-access">
+        <h3>Accesos Rápidos</h3>
+        <div class="buttons">
+          <button class="btn-primary">Nueva Solicitud</button>
+          <button class="btn-primary">Registrar Empresa</button>
+          <button class="btn-disabled">Generar Enpote</button>
+        </div>
+      </div>
+
+      <!-- Gráfico y tareas -->
+      <div class="stats-section">
+        <div class="chart-box">
+          <h4>Actividad Mensual</h4>
+          <img src="{% static 'core/img/chart-placeholder.png' %}" alt="Gráfico">
+        </div>
+        <div class="tasks-box">
+          <h4>Lista de Tareas Pendientes</h4>
+          <p>Revisar empresa "Logística del Sur"</p>
+        </div>
+      </div>
+
+      <!-- Tabla de solicitudes -->
+      <div class="table-section">
+        <h4>Solicitudes recientes</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Ruta</th>
+              <th>Cliente</th>
+              <th>Estado</th>
+              <th>Fetao</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Cliente</td>
+              <td>Revisar Logística del Sur</td>
+              <td>1D</td>
+              <td>1D</td>
+              <td><span class="status orange"></span></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Eruta</td>
+              <td>Validar empresa era</td>
+              <td>15</td>
+              <td>10</td>
+              <td><span class="status blue"></span></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Pendiente</td>
+              <td>Confirmado</td>
+              <td>16</td>
+              <td>15</td>
+              <td><span class="status gray"></span></td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Finalizado</td>
+              <td>Validar empresa venta</td>
+              <td>15</td>
+              <td>13</td>
+              <td><span class="status orange"></span></td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Finalizado</td>
+              <td>Loilrdad Zil Fite</td>
+              <td>10</td>
+              <td>17</td>
+              <td><span class="status blue"></span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+{% endblock %}
