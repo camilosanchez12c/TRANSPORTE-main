@@ -4,152 +4,278 @@
 {% block title %}Dashboard Cliente{% endblock %}
 
 {% block extra_head %}
-  <!-- meta responsive + Bootstrap CSS -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-PLACEHOLDER" crossorigin="anonymous">
-  <!-- CSS específico de la página cliente (se carga después de auth.css para sobrescribir) -->
-  <link rel="stylesheet" href="{% static 'core/css/cliente.css' %}">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Poppins Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- Custom CSS -->
+<link rel="stylesheet" href="{% static 'core/css/cliente.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="app-root">
 
-  <!-- SIDEBAR (visible en md+) -->
-  <aside class="sidebar d-none d-md-flex" role="navigation" aria-label="Menú principal">
-    <div class="brand">
-      <img src="{% static 'core/img/logo.png' %}" alt="logo" class="brand-logo">
-    </div>
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-inner container-fluid d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-3 topbar-left">
+        <div class="logo-badge">
+          <img src="{% static 'core/img/logo.png' %}" alt="logo" class="topbar-logo">
+        </div>
+        <h1 class="topbar-title">Dashboard Cliente</h1>
+      </div>
 
-    <nav class="nav" aria-label="Navegación principal">
-      <a class="nav-item" href="#">
-        <svg viewBox="0 0 24 24" aria-hidden><path d="M3 10.5L12 4l9 6.5" stroke="currentColor" stroke-width="1.6"/><path d="M9 21V12h6v9" stroke="currentColor" stroke-width="1.6"/></svg>
-        <span>Inicio</span>
-      </a>
-      <!-- resto de items... -->
-      <a class="nav-item active" href="#">
-        <svg viewBox="0 0 24 24" aria-hidden><path d="M3 21l3-1 12-12 2 2L10 22l-7 0z" stroke="currentColor" stroke-width="1.2"/></svg>
-        <span>Mis Solicitudes</span>
-      </a>
-      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" aria-hidden><circle cx="9" cy="7" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M2 21c1-4 8-4 9-4s8 0 9 4" stroke="currentColor" stroke-width="1.2"/></svg><span>Operadores</span></a>
-      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" aria-hidden><path d="M12 8v4l3 3" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.2"/></svg><span>Historial de Viajes</span></a>
-      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" aria-hidden><rect x="3" y="3" width="8" height="8" stroke="currentColor" stroke-width="1.4"/></svg><span>Nistofes</span></a>
-      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" aria-hidden><path d="M22 12v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6" stroke="currentColor" stroke-width="1.4"/><path d="M16 6l-4 4-4-4" stroke="currentColor" stroke-width="1.4"/></svg><span>Solicitudes Recibidas</span></a>
-      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" aria-hidden><path d="M20 6H4" stroke="currentColor" stroke-width="1.2"/><path d="M20 12H4" stroke="currentColor" stroke-width="1.2"/></svg><span>Mis Ofertas</span></a>
-      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" aria-hidden><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4" stroke="currentColor" stroke-width="1.2"/></svg><span>Configuración</span></a>
+      <div class="topbar-right d-flex align-items-center gap-2">
+        <button class="btn topbar-ingresar d-none d-md-inline" type="button">INGRESAR</button>
+        <button
+          class="btn btn-ghost d-md-none open-offcanvas-btn"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasSidebar"
+          aria-controls="offcanvasSidebar"
+        >
+          <i class="bi bi-list" style="font-size:20px;"></i>
+        </button>
+        <div class="avatar"><i class="bi bi-person"></i></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SIDEBAR (desktop) -->
+  <aside class="sidebar d-none d-md-flex" aria-label="Sidebar principal">
+    <nav class="nav flex-column mt-2">
+      <a class="nav-item" href="#"><i class="bi bi-house-door"></i><span>Inicio</span></a>
+      <a class="nav-item" href="#"><i class="bi bi-truck"></i><span>Vals Asignaciones</span></a>
+      <a class="nav-item active" href="#"><i class="bi bi-pencil-square"></i><span>Mis Solicitudes</span></a>
+      <a class="nav-item" href="#"><i class="bi bi-people"></i><span>Operadores</span></a>
+      <a class="nav-item" href="#"><i class="bi bi-clock-history"></i><span>Historial de Viajes</span></a>
+      <a class="nav-item" href="#"><i class="bi bi-inbox"></i><span>Solicitudes Recibidas</span></a>
+      <a class="nav-item" href="#"><i class="bi bi-list-check"></i><span>Mis Ofertas</span></a>
+      <a class="nav-item" href="#"><i class="bi bi-gear"></i><span>Configuración</span></a>
     </nav>
   </aside>
 
-  <!-- OFFCANVAS SIDEBAR (para pantallas pequeñas) -->
-  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="offcanvasSidebarLabel">Menú</h5>
-      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+  <!-- OFFCANVAS (mobile menu) -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar">
+    <div class="offcanvas-header d-flex align-items-center">
+      <h5 class="mb-0 text-white">Dashboard Cliente</h5>
+      <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
     </div>
-    <div class="offcanvas-body p-0">
-      <aside class="mobile-sidebar p-3">
-        <div class="brand mb-2">
-          <img src="{% static 'core/img/logo.png' %}" alt="logo" class="brand-logo">
-        </div>
-        <nav class="nav flex-column">
-          <a class="nav-item py-2" href="#" data-bs-dismiss="offcanvas">Inicio</a>
-          <a class="nav-item py-2" href="#" data-bs-dismiss="offcanvas">Vals Asignaciones</a>
-          <a class="nav-item py-2 active" href="#" data-bs-dismiss="offcanvas">Mis Solicitudes</a>
-          <a class="nav-item py-2" href="#" data-bs-dismiss="offcanvas">Operadores</a>
-          <a class="nav-item py-2" href="#" data-bs-dismiss="offcanvas">Historial de Viajes</a>
-          <a class="nav-item py-2" href="#" data-bs-dismiss="offcanvas">Nistofes</a>
-          <a class="nav-item py-2" href="#" data-bs-dismiss="offcanvas">Solicitudes Recibidas</a>
-          <a class="nav-item py-2" href="#" data-bs-dismiss="offcanvas">Mis Ofertas</a>
-          <a class="nav-item py-2" href="#" data-bs-dismiss="offcanvas">Configuración</a>
-        </nav>
-      </aside>
+    <div class="offcanvas-body">
+      <nav class="nav flex-column">
+        <a class="nav-item py-2" href="#" data-bs-dismiss="offcanvas">Inicio</a>
+        <a class="nav-item py-2" href="#" data-bs-dismiss="offcanvas">Vals Asignaciones</a>
+        <a class="nav-item py-2 active" href="#" data-bs-dismiss="offcanvas">Mis Solicitudes</a>
+        <a class="nav-item py-2" href="#" data-bs-dismiss="offcanvas">Operadores</a>
+        <a class="nav-item py-2" href="#" data-bs-dismiss="offcanvas">Historial de Viajes</a>
+        <a class="nav-item py-2" href="#" data-bs-dismiss="offcanvas">Solicitudes Recibidas</a>
+        <a class="nav-item py-2" href="#" data-bs-dismiss="offcanvas">Mis Ofertas</a>
+        <a class="nav-item py-2" href="#" data-bs-dismiss="offcanvas">Configuración</a>
+      </nav>
     </div>
   </div>
 
-  <!-- MAIN (contenido desplazado a la derecha por la sidebar fija en md+) -->
-  <main class="main" role="main">
-    <header class="header">
-      <div class="d-flex align-items-center gap-3">
-        <!-- Toggle visible en sm -->
-        <button class="btn btn-light d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar" aria-label="Abrir menú">
-          <svg width="20" height="20" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-        </button>
-        <h1 class="m-0">Dashboard Cliente</h1>
-      </div>
+  <!-- MAIN -->
+  <main class="main" id="mainContent">
+    <div class="page-shell">
+      <div class="page-panel">
 
-      <div class="header-actions">
-        <button class="btn btn-outline">INGRESAR</button>
-        <div class="avatar" title="Usuario">
-          <svg viewBox="0 0 24 24" aria-hidden><circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M4 20c1.5-4 14-4 16 0" stroke="currentColor" stroke-width="1.2"/></svg>
-        </div>
-      </div>
-    </header>
+        <!-- Grid: hero + KPIs -->
+        <div class="hero-kpi-grid">
 
-    <section class="content container-fluid px-0">
-      <div class="top-row d-flex flex-wrap align-items-flex-start">
-        <button class="btn create mb-3">CREAR NUEVA SOLICITUD</button>
+          <!-- KPIs -->
+          <div class="kpi-area">
+            <div class="row gx-4 gy-3 align-items-start kpi-row">
+              <!-- CTA column (se vuelve absolute en desktop via CSS) -->
+              <div class="col-12 col-lg-3 d-flex align-items-start">
+                <div class="cta-wrap w-100">
+                  <button class="btn create w-100">CREAR NUEVA SOLICITUD</button>
+                </div>
+              </div>
 
-        <div class="kpis d-flex flex-wrap">
-          <div class="card card-highlight me-3 mb-3">
-            <h3>Solicitudes Activas</h3>
-            <div class="kpi-number">10</div>
-            <div class="kpi-sub">Ofertas Activas</div>
+              <!-- KPI cards -->
+              <div class="col-12 col-lg-9">
+                <div class="d-flex gap-3 kpis-wrap justify-content-start">
+                  <div class="card card-highlight">
+                    <h3>Solicitudes Activas</h3>
+                    <div class="kpi-number">10</div>
+                    <div class="kpi-sub">Ofertadas Activas</div>
+                  </div>
+
+                  <div class="card">
+                    <h3>Ofertas Recibidas</h3>
+                    <div class="kpi-number">36</div>
+                    <div class="kpi-sub">Ofertas por Drseh Airlines</div>
+                  </div>
+
+                  <div class="card">
+                    <h3>Viajes Recibidos</h3>
+                    <div class="kpi-number">45</div>
+                    <div class="kpi-sub">Ofertas Curso 3D Activos Hoy</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+        </div> <!-- .hero-kpi-grid -->
 
-          <div class="card me-3 mb-3">
-            <h3>Ofertas Recibidas</h3>
-            <div class="kpi-number">36</div>
-            <div class="kpi-sub">Ofertadas por Drseh Airlines</div>
-          </div>
-
-          <div class="card mb-3">
-            <h3>Viajes Recibidos</h3>
-            <div class="kpi-number">45</div>
-            <div class="kpi-sub">Ofertas Curso 3D Activos Hoy</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel table-panel mt-3">
-        <h2>Ofertas Recibidas Recientes</h2>
-        <div class="table-responsive">
-          <table class="styled-table table" role="table" aria-label="Ofertas">
-            <thead>
-              <tr><th>ID</th><th>Ruta</th><th>Cliente</th><th>Estado</th><th>Estado</th><th>Estado</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>1</td><td>Cliente</td><td>Drivilar Logistica del Sur</td><td>10</td><td>10</td><td><span class="dot dot-orange"></span></td></tr>
-              <tr><td>3</td><td>Fruta</td><td>Validar empresa</td><td>10</td><td>15</td><td><span class="dot dot-dark"></span></td></tr>
-              <tr><td>4</td><td>Fruta</td><td>Validar empresa del Sua</td><td>10</td><td>15</td><td><span class="dot dot-orange"></span></td></tr>
-              <tr><td>11</td><td>Finalizado</td><td>A la tiido</td><td>10</td><td>10</td><td><span class="dot dot-orange"></span></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="panel trip-panel mt-3">
-        <h2>Historial de Viajes Próximos</h2>
-        <div class="trip d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between">
-          <div class="trip-info mb-3 mb-md-0">
-            <p><strong>Viaje #2024-03-20-002</strong><br>Origen: Cali - Destino, Eje Cafetro</p>
-            <p>Fecha y Hora: Mañana, 09:00 — Pasajeros: 10</p>
-          </div>
-
-          <div class="trip-actions">
-            <button class="btn btn-outline me-2">VER OFERTA</button>
-            <button class="btn btn-primary">VER DETALLES</button>
+        <div class="panel table-panel mt-4">
+          <h2>Ofertas Recibidas Recientes</h2>
+          <div class="table-responsive-wrapper">
+            <div class="table-responsive">
+              <table class="styled-table table mb-0">
+                <thead>
+                  <tr><th>ID</th><th>Ruta</th><th>Cliente</th><th>Estado</th><th>Valor</th><th></th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>1</td><td>Cliente</td><td>Driviltar Logística del Sur</td><td>10</td><td>10</td><td><span class="dot dot-orange"></span></td></tr>
+                  <tr><td>3</td><td>Fruta</td><td>Validar empresa</td><td>10</td><td>15</td><td><span class="dot dot-dark"></span></td></tr>
+                  <tr><td>4</td><td>Fruta</td><td>Validar empresa del Sua</td><td>10</td><td>15</td><td><span class="dot dot-orange"></span></td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
+
+        <div class="panel trip-panel mt-4 d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between">
+          <div class="trip-info">
+            <h2 class="mb-2">Historial de Viajes Próximos</h2>
+            <p><strong>Viaje #2024-03-20-002</strong><br>Origen: Cali - Eje Cafetero</p>
+            <p class="text-muted">Fecha y Hora: Mañana, 09:00 — Pasajeros: 10</p>
+          </div>
+
+          <div class="trip-actions mt-3 mt-md-0 d-flex gap-2">
+            <button class="btn btn-outline-outline">VER OFERTA</button>
+            <button class="btn btn-primary-accent">VER DETALLES</button>
+          </div>
+        </div>
+
       </div>
-    </section>
+    </div>
   </main>
 </div>
+<body>
+  
+  <script>
+  (function(){
+    // menú desktop + offcanvas
+    const menuItems = document.querySelectorAll('.nav .nav-item');
 
-<!-- Bootstrap JS (bundle incluye Popper) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-PLACEHOLDER" crossorigin="anonymous"></script>
-<!-- Pequeño script para cerrar offcanvas cuando se clica un item (UX) -->
-<script>
-  document.querySelectorAll('#offcanvasSidebar .nav a').forEach(function(a){
-    a.addEventListener('click', function(){ var off = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasSidebar')); if(off) off.hide(); });
+    function setActive(el) {
+      menuItems.forEach(i => i.classList.remove('active','is-active'));
+      el.classList.add('active','is-active');
+      // opcional: scrolleable focus para accesibilidad
+      el.setAttribute('aria-current','page');
+    }
+
+    menuItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        setActive(e.currentTarget);
+        // pequeño feedback visual: pulsar (añadimos y quitamos clase breve para animación)
+        e.currentTarget.classList.add('just-clicked');
+        setTimeout(()=> e.currentTarget.classList.remove('just-clicked'), 220);
+      });
+      // soporte teclado: Enter/Space activa
+      item.addEventListener('keydown', (ev) => {
+        if(ev.key === 'Enter' || ev.key === ' ') {
+          ev.preventDefault();
+          setActive(ev.currentTarget);
+        }
+      });
+    });
+
+    // si quieres, marca el primer item como activo al cargar si no hay ninguno
+    document.addEventListener('DOMContentLoaded', () => {
+      const anyActive = Array.from(menuItems).some(i => i.classList.contains('active'));
+      if(!anyActive && menuItems[0]) setActive(menuItems[0]);
+    });
+  })();
+
+(function(){
+  // seleccionamos links dentro del offcanvas (menu movil) y los del sidebar desktop
+  const offcanvasEl = document.querySelector('.offcanvas');
+  const offcanvasLinks = offcanvasEl ? offcanvasEl.querySelectorAll('.nav .nav-item') : [];
+  const sidebarLinks = document.querySelectorAll('.sidebar .nav .nav-item');
+
+  // funcion que desactiva el cerrar automático del offcanvas (remove data-bs-dismiss)
+  function disableOffcanvasAutoClose() {
+    offcanvasLinks.forEach(a => {
+      // quitamos atributo si existe (proviene de tu HTML original)
+      if (a.hasAttribute('data-bs-dismiss')) a.removeAttribute('data-bs-dismiss');
+      // también prevenimos el cierre por propagation al hacer click (defensa extra)
+      a.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        // no ev.preventDefault() porque probablemente quieras que el href funcione
+        // si el link navega a otra página, el offcanvas seguirá sin cerrarse hasta que cambie la página.
+      });
+    });
+  }
+
+  // funcion que re-activa (si deseas mantener data-bs-dismiss en desktop)
+  function enableOffcanvasAutoClose() {
+    offcanvasLinks.forEach(a => {
+      // Si quieres restaurar la capacidad de cerrar, asigna el atributo de nuevo
+      // **Comentar por defecto para no reactivar**. Si lo prefieres, descomenta y asigna valor:
+      // a.setAttribute('data-bs-dismiss', 'offcanvas');
+      // y quitamos el listener de stopPropagation (no simple revert aquí; es suficiente dejarlo)
+    });
+  }
+
+  // decide segun ancho (mobile = <= 991.98)
+  function updateOffcanvasBehavior() {
+    const mobile = window.innerWidth <= 991.98;
+    if (!offcanvasEl) return;
+    if (mobile) {
+      disableOffcanvasAutoClose();
+    } else {
+      // en escritorio no usamos offcanvas, así que podemos dejarlo como está
+      // si quieres restaurar cerrar automático en escritorio (cuando el offcanvas se usa), descomenta:
+      // enableOffcanvasAutoClose();
+    }
+  }
+
+  // inicializar al cargar
+  document.addEventListener('DOMContentLoaded', function(){
+    updateOffcanvasBehavior();
+
+    // marcar primero como activo si no hay ninguno (mejora UX)
+    const anyActive = Array.from(sidebarLinks).some(i => i.classList.contains('active'));
+    if(!anyActive && sidebarLinks[0]) sidebarLinks[0].classList.add('active');
+
+    // pequeño accesibility: permitir Enter/Space para activar elementos del menu
+    [...sidebarLinks, ...offcanvasLinks].forEach(link => {
+      link.setAttribute('tabindex', '0');
+      link.addEventListener('keydown', (ev) => {
+        if(ev.key === 'Enter' || ev.key === ' ') {
+          ev.preventDefault();
+          link.click(); // disparar click
+        }
+      });
+    });
   });
+
+  // actualizar al redimensionar (para cambiar comportamiento si cambias de tamaño)
+  let resizeTimer;
+  window.addEventListener('resize', function(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(updateOffcanvasBehavior, 150);
+  });
+})();
+
+
+
+
 </script>
+
+</body>
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

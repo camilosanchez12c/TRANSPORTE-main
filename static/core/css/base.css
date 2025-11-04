@@ -1,101 +1,125 @@
-/* base.css — header y footer fijos, main entre ellos, sin espacios sobrantes */
+/* base.css — estructura global (header opcional, footer fijo y main adaptativo) */
 
 /* Variables */
-:root{
-  --nav-blue:#254a55;
-  --bg:#eef3f5;
-  --content-max:1400px;
-  --header-h:72px;   /* ajusta si quieres header más alto/bajo */
-  --footer-h:64px;
+:root {
+  --nav-blue: #254a55;
+  --bg: #eef3f5;
+  --content-max: 1400px;
+  --header-h: 72px;
+  --footer-h: 64px;
   --font: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --page-side-padding: 16px;
 }
 
 /* Reset y base */
-*{box-sizing:border-box}
-html,body{height:100%; margin:0; font-family:var(--font); background:var(--bg); -webkit-font-smoothing:antialiased;}
-
-/* HEADER: fijo y visible */
-.site-header{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  height:var(--header-h);
-  background:var(--nav-blue);
-  color:#fff;
-  z-index:2200; /* muy arriba para que siempre se vea */
-  display:flex;
-  align-items:center;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
-  padding: 0 16px;
-}
-.header-inner{
-  width:100%;
-  max-width:var(--content-max);
-  margin:0 auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-.brand-logo{
-  height:52px;
-  width:auto;
-  object-fit:contain;
-  display:block;
-  border-radius:6px;
-}
-.header-nav .nav-link{
-  color:#fff;
-  font-weight:600;
-  text-decoration:none;
+* {
+  box-sizing: border-box;
 }
 
-/* MAIN: ocupa todo el alto restante y centra su contenido */
-.site-main{
-  min-height: calc(100vh - var(--header-h) - var(--footer-h));
-  height: calc(100vh - var(--header-h) - var(--footer-h));
-  padding: 0; /* quitamos paddings verticales que dejaban huecos */
-  display:flex;
-  align-items:center;      /* CENTRA verticalmente */
-  justify-content:center;  /* CENTRA horizontalmente */
-  width:100%;
-  box-sizing:border-box;
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden; /* evita desplazamiento lateral en móvil */
 }
 
-/* FOOTER: fijo abajo y visible */
-.site-footer{
-  position:fixed;
-  left:0;
-  right:0;
-  bottom:0;
-  height:var(--footer-h);
-  background:var(--nav-blue);
-  color:#fff;
-  z-index:2200;
-  display:flex;
-  align-items:center;
-  box-shadow: 0 -3px 10px rgba(0,0,0,0.12);
-  padding: 0 16px;
+/* MAIN — ocupa todo el espacio visible sin que el footer tape el contenido */
+.site-main {
+  min-height: calc(100vh - var(--footer-h));
+  padding-top: calc(var(--header-h) + 12px); /* deja espacio si hay topbar fijo */
+  padding-left: var(--page-side-padding);
+  padding-right: var(--page-side-padding);
+  padding-bottom: calc(var(--footer-h) + 12px);
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  display: block;
 }
-.footer-inner{
-  width:100%;
-  max-width:var(--content-max);
-  margin:0 auto;
-  display:flex;
-  justify-content:center;
-  gap:48px;
-  align-items:center;
-}
-.footer-link{ color:#fff; text-decoration:none; font-weight:500; }
 
-/* Responsiveness */
-@media (max-width:768px){
-  :root{
-    --header-h:64px;
-    --footer-h:64px;
+/* Centrado absoluto opcional (para login u otras vistas) */
+.centered-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--footer-h));
+  padding-top: 0;
+}
+
+/* FOOTER — fijo en la parte inferior */
+.site-footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: var(--footer-h);
+  background: var(--nav-blue);
+  color: #fff;
+  z-index: 2200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.footer-inner {
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  align-items: center;
+  text-align: center;
+}
+
+.footer-link {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+
+.footer-link:hover {
+  opacity: 0.85;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+  :root {
+    --header-h: 64px;
+    --footer-h: 56px;
   }
-  .brand-logo{ height:44px; }
-  .header-inner{ padding:0 12px; }
-  .footer-inner{ gap:20px; padding:0 12px; }
-  .site-main{ padding:0; }
+
+  .site-main {
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: calc(var(--header-h) + 10px);
+    padding-bottom: calc(var(--footer-h) + 10px);
+  }
+
+  .footer-inner {
+    gap: 20px;
+    padding: 0 12px;
+    flex-wrap: wrap;
+    font-size: 14px;
+  }
+}
+
+/* --- MOBILE SMALL --- */
+@media (max-width: 576px) {
+  :root {
+    --header-h: 56px;
+    --footer-h: 50px;
+  }
+
+  .footer-inner {
+    gap: 12px;
+    font-size: 13px;
+  }
+
+  .footer-link {
+    font-size: 13px;
+  }
 }
