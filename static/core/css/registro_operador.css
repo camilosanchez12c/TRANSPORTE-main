@@ -1,0 +1,121 @@
+/* === REGLAS GLOBALES === */
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #eef2f4;
+}
+
+/* === ENCABEZADO (Mismo que login y empresa) === */
+.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #0f3b3f;
+    padding: 10px 20px;
+    z-index: 1000;
+}
+
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-logo {
+    width: 60px;
+    height: auto;
+    border-radius: 10px;
+}
+
+.nav-link {
+    background: #ff8c42;
+    color: white;
+    padding: 8px 18px;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+.nav-link:hover {
+    background: #ff7a22;
+}
+
+/* === FORMULARIO === */
+.registro-container {
+    margin-top: 120px; /* Para que no tape el header */
+    display: flex;
+    justify-content: center;
+    padding: 30px 15px;
+}
+
+.form-card {
+    background: #fff;
+    width: 100%;
+    max-width: 550px;
+    padding: 35px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.titulo {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.subtitulo {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.seccion-titulo {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    border-left: 4px solid #ff8c42;
+    padding-left: 8px;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+    color: #222;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 4px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background: #ff8c42;
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-submit:hover {
+    background: #ff7a22;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 600px) {
+    .form-card {
+        padding: 25px;
+    }
+    .brand-logo {
+        width: 48px;
+    }
+}

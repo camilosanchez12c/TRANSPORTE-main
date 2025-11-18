@@ -1,0 +1,81 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'core/css/registro_empresa.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<header class="site-header">
+    <div class="header-inner">
+        <a href="/" class="brand">
+            <img src="{% static 'core/img/logo.png' %}" class="brand-logo" alt="Logo">
+        </a>
+        <nav class="header-nav">
+            <a href="{% url 'inicio' %}" class="nav-link">Home</a>
+        </nav>
+    </div>
+</header>
+
+<div class="registro-container">
+
+    <div class="form-card">
+        <h2 class="titulo">Registro de Empresa</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- DATOS DEL REPRESENTANTE -->
+            <h3 class="seccion-titulo">Datos del Representante Legal</h3>
+
+            <label>Nombre completo *</label>
+            <input type="text" name="nombre_representante" required>
+
+            <label>Correo electrónico *</label>
+            <input type="email" name="email" required>
+
+            <label>Teléfono *</label>
+            <input type="text" name="telefono" required>
+
+            <label>Contraseña *</label>
+            <input type="password" name="password" required>
+
+            <label>Confirmar contraseña *</label>
+            <input type="password" name="password2" required>
+
+
+            <!-- DATOS DE LA EMPRESA -->
+            <h3 class="seccion-titulo">Datos de la Empresa</h3>
+
+            <label>Razón Social *</label>
+            <input type="text" name="razon_social" required>
+
+            <label>NIT *</label>
+            <input type="text" name="nit" required>
+
+            <label>Dirección *</label>
+            <input type="text" name="direccion" required>
+
+            <label>Ciudad *</label>
+            <input type="text" name="ciudad" required>
+
+
+            <!-- DOCUMENTOS -->
+            <h3 class="seccion-titulo">Documentos Obligatorios</h3>
+
+            <label>RUT (PDF/JPG) *</label>
+            <input type="file" name="rut" accept=".pdf,.jpg,.jpeg,.png" required>
+
+            <label>Cámara de Comercio (PDF/JPG) *</label>
+            <input type="file" name="camara_comercio" accept=".pdf,.jpg,.jpeg,.png" required>
+
+            <label>Licencia de Operación (PDF/JPG) *</label>
+            <input type="file" name="licencia_operacion" accept=".pdf,.jpg,.jpeg,.png" required>
+
+            <button class="btn-submit" type="submit">Crear empresa</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

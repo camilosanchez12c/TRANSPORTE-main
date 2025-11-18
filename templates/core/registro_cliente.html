@@ -1,0 +1,302 @@
+{% extends 'core/base.html' %}
+
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'core/css/registro_cliente.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="register-container">
+
+    <!-- HEADER PERSONALIZADO -->
+    <header class="custom-header">
+        <a href="/" class="header-logo">
+            <img src="{% static 'core/img/logo.png' %}" alt="Logo">
+        </a>
+
+        <a href="{% url 'inicio' %}" class="header-home-btn">Home</a>
+    </header>
+
+    <!-- FORMULARIO -->
+    <div class="auth-wrapper">
+        <div class="auth-card">
+
+            <h2 class="auth-title">Registro de Cliente</h2>
+            <p class="auth-subtitle">Crea tu cuenta para usar nuestra plataforma</p>
+
+            <form method="POST" id="registro-form" novalidate>
+                {% csrf_token %}
+
+                <label>Nombre completo</label>
+                <input type="text" name="nombre" id="nombre-field" value="{{ form.nombre.value }}" required>
+                <div class="error-text" id="nombre-error">{% for e in form.nombre.errors %}{{ e }}{% endfor %}</div>
+
+                <label>Correo electrónico</label>
+                <input type="email" name="email" id="email-field" value="{{ form.email.value }}" required>
+                <div class="error-text" id="email-error">{% for e in form.email.errors %}{{ e }}{% endfor %}</div>
+
+                <label>Teléfono</label>
+                <!-- inputmode y pattern ayudan en móvil y validación HTML -->
+                <input type="text" name="telefono" id="telefono-field" value="{{ form.telefono.value }}" required maxlength="10" pattern="\d{10}" inputmode="numeric" autocomplete="tel">
+                <div class="error-text" id="telefono-error">{% for e in form.telefono.errors %}{{ e }}{% endfor %}</div>
+
+                <label>Contraseña</label>
+                <input type="password" name="password" id="password-field" minlength="8" required autocomplete="new-password">
+                <div class="error-text" id="password-error">{% for e in form.password.errors %}{{ e }}{% endfor %}</div>
+
+                <label>Confirmar contraseña</label>
+                <input type="password" name="password2" id="password2-field" minlength="8" required autocomplete="new-password">
+                <div class="error-text" id="password2-error">{% for e in form.password2.errors %}{{ e }}{% endfor %}</div>
+
+                <!-- Errores generales del formulario (como "las contraseñas no coinciden") -->
+                <div id="form-errors">
+                    {% for e in form.non_field_errors %}<div class="error-text">{{ e }}</div>{% endfor %}
+                </div>
+
+                <button type="submit" class="btn-submit" id="submit-btn">Crear cuenta</button>
+            </form>
+
+            <p class="login-link">
+                ¿Ya tienes una cuenta?
+                <a href="{% url 'login' %}">Inicia sesión aquí</a>
+            </p>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- ============================= -->
+<!--     VALIDACIONES JS           -->
+<!-- ============================= -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    // Campos
+    const form = document.getElementById('registro-form');
+    const nombre = document.getElementById('nombre-field');
+    const email = document.getElementById('email-field');
+    const telefono = document.getElementById('telefono-field');
+    const password = document.getElementById('password-field');
+    const password2 = document.getElementById('password2-field');
+
+    // Errores (DOM)
+    const nombreErr = document.getElementById('nombre-error');
+    const emailErr = document.getElementById('email-error');
+    const telefonoErr = document.getElementById('telefono-error');
+    const passErr = document.getElementById('password-error');
+    const pass2Err = document.getElementById('password2-error');
+    const formErrors = document.getElementById('form-errors');
+
+    // Estado global de validez
+    const state = {
+        nombre: false,
+        email: false,
+        telefono: false,
+        passwordsMatch: false
+    };
+
+    // ---------------------------
+    // FUNCIONES DE ESTADO/CSS
+    // ---------------------------
+    function markValid(field) {
+        field.classList.remove('input-error', 'input-warning');
+        field.classList.add('input-success');
+    }
+    function markInvalid(field) {
+        field.classList.remove('input-success', 'input-warning');
+        field.classList.add('input-error');
+    }
+    function markWarning(field) {
+        field.classList.remove('input-success', 'input-error');
+        field.classList.add('input-warning');
+    }
+    function clearMark(field) {
+        field.classList.remove('input-success', 'input-error', 'input-warning');
+    }
+
+    // ---------------------------
+    // VALIDAR NOMBRE (no vacío mínimo 2 caracteres)
+    // ---------------------------
+    function validateNombre() {
+        const v = nombre.value.trim();
+        if (v.length < 2) {
+            nombreErr.textContent = "Ingresa tu nombre completo (mínimo 2 caracteres).";
+            markInvalid(nombre);
+            state.nombre = false;
+        } else {
+            nombreErr.textContent = "";
+            markValid(nombre);
+            state.nombre = true;
+        }
+    }
+    nombre.addEventListener('input', validateNombre);
+    nombre.addEventListener('blur', validateNombre);
+
+    // ---------------------------
+    // VALIDAR TELÉFONO (exacto 10 dígitos)
+    // ---------------------------
+    function onlyDigits(str) {
+        return str.replace(/\D/g,'');
+    }
+
+    telefono.addEventListener('input', () => {
+        // limpiamos todo carácter no numérico y mantener maxlength
+        const digits = onlyDigits(telefono.value).slice(0, 10);
+        telefono.value = digits;
+        validateTelefono();
+    });
+
+    function validateTelefono() {
+        const v = telefono.value.trim();
+        if (v.length === 0) {
+            telefonoErr.textContent = "El teléfono es obligatorio.";
+            markInvalid(telefono);
+            state.telefono = false;
+            return;
+        }
+        if (!/^\d{10}$/.test(v)) {
+            telefonoErr.textContent = "El teléfono debe tener exactamente 10 dígitos.";
+            markInvalid(telefono);
+            state.telefono = false;
+            return;
+        }
+        telefonoErr.textContent = "";
+        markValid(telefono);
+        state.telefono = true;
+    }
+    telefono.addEventListener('blur', validateTelefono);
+
+    // ---------------------------
+    // VALIDAR CONTRASEÑAS EN TIEMPO REAL
+    // ---------------------------
+    function validatePasswords() {
+        passErr.textContent = "";
+        pass2Err.textContent = "";
+
+        if (!password.value || !password2.value) {
+            // si alguno vacío, marcar como inválido pero no mostrar "no coinciden" hasta que escriban
+            if (!password.value) markInvalid(password); else markValid(password);
+            if (!password2.value) markInvalid(password2); else markValid(password2);
+            state.passwordsMatch = false;
+            return;
+        }
+
+        if (password.value !== password2.value) {
+            pass2Err.textContent = "Las contraseñas no coinciden.";
+            markInvalid(password);
+            markInvalid(password2);
+            state.passwordsMatch = false;
+        } else {
+            passErr.textContent = "";
+            pass2Err.textContent = "";
+            markValid(password);
+            markValid(password2);
+            state.passwordsMatch = true;
+        }
+    }
+    password.addEventListener('input', validatePasswords);
+    password2.addEventListener('input', validatePasswords);
+
+    // ---------------------------
+    // VALIDAR EMAIL (format + AJAX existencia)
+    // ---------------------------
+    // validación simple de formato
+    function validateEmailFormat() {
+        const v = email.value.trim();
+        if (v.length === 0) {
+            emailErr.textContent = "El correo es obligatorio.";
+            markInvalid(email);
+            state.email = false;
+            return false;
+        }
+        // regex simple para email
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!re.test(v)) {
+            emailErr.textContent = "Ingresa un correo válido.";
+            markInvalid(email);
+            state.email = false;
+            return false;
+        }
+        emailErr.textContent = "";
+        return true;
+    }
+
+    let emailTimer = null;
+    email.addEventListener('input', function() {
+        // validar formato primero
+        if (!validateEmailFormat()) return;
+
+        // debounce para no spamear el servidor
+        if (emailTimer) clearTimeout(emailTimer);
+        emailTimer = setTimeout(() => {
+            // llamada AJAX al endpoint que debes agregar (ver abajo)
+            fetch(`/validar_email/?email=${encodeURIComponent(email.value.trim())}`)
+            .then(resp => resp.json())
+            .then(data => {
+                if (data.existe) {
+                    emailErr.textContent = "Este correo ya está registrado.";
+                    markWarning(email);
+                    state.email = false; // no válido para registro nuevo
+                } else {
+                    emailErr.textContent = "";
+                    markValid(email);
+                    state.email = true;
+                }
+            })
+            .catch(err => {
+                // si falla la petición, no bloquear proceso; mostrar formato OK
+                markValid(email);
+                state.email = true;
+            });
+        }, 400); // 400ms debounce
+    });
+
+    email.addEventListener('blur', () => {
+        // si quedó vacío o formato inválido se corrige de nuevo
+        validateEmailFormat();
+    });
+
+    // ---------------------------
+    // SUBMIT: impedir si hay errores
+    // ---------------------------
+    form.addEventListener('submit', function(e) {
+        // forzamos validaciones finales
+        validateNombre();
+        validateTelefono();
+        validatePasswords();
+        validateEmailFormat();
+
+        // si email formato ok pero no hemos tenido respuesta AJAX aún, bloquear hasta validación
+        // comprobamos estado de campos
+        const allValid = state.nombre && state.telefono && state.email && state.passwordsMatch;
+
+        if (!allValid) {
+            e.preventDefault();
+            // mostrar un mensaje general si quieres
+            if (!state.passwordsMatch) {
+                pass2Err.textContent = "Las contraseñas no coinciden.";
+            }
+            if (!state.email) {
+                // si ya hay texto de emailErr lo dejamos, si no lo ponemos genérico
+                if (!emailErr.textContent) emailErr.textContent = "Revisa el correo.";
+            }
+            if (!state.telefono) {
+                if (!telefonoErr.textContent) telefonoErr.textContent = "Teléfono inválido.";
+            }
+            // desplazarse al primer error visible
+            const firstErrorField = document.querySelector('.input-error, .input-warning');
+            if (firstErrorField) firstErrorField.scrollIntoView({behavior: 'smooth', block: 'center'});
+            return false;
+        }
+
+        // si todo ok, permitir envío (backend hará validaciones finales)
+        return true;
+    });
+
+});
+</script>
+
+{% endblock %}

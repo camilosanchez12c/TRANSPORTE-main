@@ -58,7 +58,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Auth
-AUTH_USER_MODEL = 'usuarios.Usuario'
+#AUTH_USER_MODEL = 'usuarios.Usuario'
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'

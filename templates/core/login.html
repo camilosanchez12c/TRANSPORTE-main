@@ -9,7 +9,8 @@
 {% block title %}Inicia Sesión{% endblock %}
 
 {% block content %}
- <header class="site-header" role="banner">
+
+<header class="site-header" role="banner">
     <div class="header-inner">
       <a href="/" class="brand" aria-label="Inicio">
         <img src="{% static 'core/img/logo.png' %}" alt="Logo" class="brand-logo">
@@ -18,14 +19,26 @@
         <a href="{% url 'inicio' %}" class="nav-link">Home</a>
       </nav>
     </div>
-  </header>
+</header>
 
 <div class="login-outer">
   <div class="login-hero" aria-hidden="true"></div>
 
   <div class="auth-wrapper">
     <section class="auth-card" aria-labelledby="auth-title">
-      <h1 id="auth-title" class="auth-title">Inicia Sesión</h1>
+    <h1 id="auth-title" class="auth-title">Inicia Sesión</h1>
+
+<!-- ERRORES DEVUELTOS POR PYTHON -->
+{% if errors %}
+<div class="messages-box">
+    {% if errors.email %}
+        <div class="alert-message error">{{ errors.email }}</div>
+    {% endif %}
+    {% if errors.password %}
+        <div class="alert-message error">{{ errors.password }}</div>
+    {% endif %}
+</div>
+{% endif %}
 
       <ul class="role-tabs" role="tablist" aria-label="Tipo de usuario">
         <li class="role-tab active" role="tab" tabindex="0" aria-selected="true" data-role="cliente">Cliente</li>
@@ -38,8 +51,19 @@
         {% csrf_token %}
         <input type="hidden" name="role" id="role-input" value="cliente">
 
-        <input class="form-control form-input" name="username" type="email" placeholder="Email" required autocomplete="username">
-        <input class="form-control form-input" name="password" type="password" placeholder="Contraseña" required autocomplete="current-password">
+        <input class="form-control form-input" 
+               name="username" 
+               type="email" 
+               placeholder="Email" 
+               required 
+               autocomplete="username">
+
+        <input class="form-control form-input" 
+               name="password" 
+               type="password" 
+               placeholder="Contraseña" 
+               required 
+               autocomplete="current-password">
 
         <label class="checkbox-label">
           <input class="form-check-input" type="checkbox" name="remember">
@@ -51,62 +75,120 @@
         </div>
 
         <a class="forgot-link" href="{% url 'password_reset' %}">¿Olvidaste tu contraseña?</a>
-        <p class="register-line">¿No tienes cuenta? <a href="{% url 'register' %}">Regístrate aquí</a></p>
+
+        <!-- El link se oculta según el tipo de usuario -->
+        <a id="register-link" href="{% url 'registro_cliente' %}">Regístrate aquí</a>
+
       </form>
     </section>
   </div>
 </div>
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+
   const tabs = Array.from(document.querySelectorAll('.role-tab'));
   const roleInput = document.getElementById('role-input');
-  const registerLine = document.querySelector('.register-line');
+  const registerLink = document.getElementById('register-link');
 
   function activateTab(tab) {
+
     tabs.forEach(t => {
       t.classList.remove('active');
-      t.setAttribute('aria-selected','false');
+      t.setAttribute('aria-selected', 'false');
     });
+
     tab.classList.add('active');
-    tab.setAttribute('aria-selected','true');
+    tab.setAttribute('aria-selected', 'true');
 
-    // Actualiza el valor oculto del rol
-    if (roleInput) roleInput.value = tab.dataset.role;
+    roleInput.value = tab.dataset.role;
+    const rol = tab.dataset.role;
 
-    // Oculta o muestra el registro si es administrador
-    if (registerLine) {
-      registerLine.style.display = (tab.dataset.role === 'administrador') ? 'none' : '';
+    // -----------------------------
+    // LÓGICA DE REGISTRO PERMITIDO
+    // -----------------------------
+    if (rol === 'cliente') {
+      registerLink.style.display = 'inline';
+      registerLink.href = "{% url 'registro_cliente' %}";
+    }
+    else if (rol === 'empresa') {
+      registerLink.style.display = 'inline';
+      registerLink.href = "{% url 'registro_empresa' %}";
+    }
+    else if (rol === 'operador') {
+      registerLink.style.display = 'inline';
+      registerLink.href = "{% url 'registro_operador' %}";
+    }
+    else {
+      // administrador
+      registerLink.style.display = 'none';
     }
 
     tab.focus();
   }
 
   tabs.forEach((tab, idx) => {
-    tab.addEventListener('click', function () { activateTab(this); });
+    tab.addEventListener('click', () => activateTab(tab));
 
-    tab.addEventListener('keydown', function (e) {
+    tab.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        activateTab(this);
-      } else if (e.key === 'ArrowRight' || e.key === 'Right') {
+        activateTab(tab);
+      } 
+      else if (e.key === 'ArrowRight') {
         e.preventDefault();
-        const next = tabs[(idx + 1) % tabs.length];
-        next.focus();
-      } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+        tabs[(idx + 1) % tabs.length].focus();
+      } 
+      else if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        const prev = tabs[(idx - 1 + tabs.length) % tabs.length];
-        prev.focus();
+        tabs[(idx - 1 + tabs.length) % tabs.length].focus();
       }
     });
-
-    tab.addEventListener('focus', function () { this.classList.add('focus-visible'); });
-    tab.addEventListener('blur',  function () { this.classList.remove('focus-visible'); });
   });
 
-  // Aplica reglas iniciales
+  // Activar la pestaña inicial
   const initialTab = document.querySelector('.role-tab.active') || tabs[0];
-  if (initialTab) activateTab(initialTab);
+  activateTab(initialTab);
+
 });
+
+// Detecta mensajes de error y marca inputs
+
+document.addEventListener("DOMContentLoaded", function () {
+    const errorMessages = document.querySelectorAll(".alert-message.error");
+
+    if (errorMessages.length > 0) {
+        const emailInput = document.querySelector("input[name='username']");
+        const passInput = document.querySelector("input[name='password']");
+
+        errorMessages.forEach(msg => {
+            if (msg.innerText.toLowerCase().includes("correo")) {
+                emailInput.classList.add("input-error");
+            }
+            if (msg.innerText.toLowerCase().includes("contraseña")) {
+                passInput.classList.add("input-error");
+            }
+        });
+    }
+});
+
+if (errorMessages.length > 0) {
+    const emailInput = document.querySelector("input[name='username']");
+    const passInput = document.querySelector("input[name='password']");
+
+    errorMessages.forEach(msg => {
+        if (msg.innerText.includes("correo")) {
+            emailInput.classList.add("input-error");
+        }
+        if (msg.innerText.includes("contraseña")) {
+            passInput.classList.add("input-error");
+        }
+        if (msg.innerText.includes("tipo seleccionado")) {
+            emailInput.classList.add("input-error");
+        }
+    });
+}
+
+
 </script>
+
 {% endblock %}
