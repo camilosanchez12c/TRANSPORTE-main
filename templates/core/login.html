@@ -27,7 +27,6 @@
     <section class="auth-card" aria-labelledby="auth-title">
       <h1 id="auth-title" class="auth-title">Inicia Sesión</h1>
 
-      <!-- role tabs: tabindex para focus, aria-selected para accesibilidad -->
       <ul class="role-tabs" role="tablist" aria-label="Tipo de usuario">
         <li class="role-tab active" role="tab" tabindex="0" aria-selected="true" data-role="cliente">Cliente</li>
         <li class="role-tab" role="tab" tabindex="0" aria-selected="false" data-role="empresa">Empresa</li>
@@ -58,11 +57,11 @@
   </div>
 </div>
 
-<!-- scripts: manejan selección, keyboard nav (left/right/enter/space) y aria -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   const tabs = Array.from(document.querySelectorAll('.role-tab'));
   const roleInput = document.getElementById('role-input');
+  const registerLine = document.querySelector('.register-line');
 
   function activateTab(tab) {
     tabs.forEach(t => {
@@ -71,15 +70,21 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     tab.classList.add('active');
     tab.setAttribute('aria-selected','true');
+
+    // Actualiza el valor oculto del rol
     if (roleInput) roleInput.value = tab.dataset.role;
+
+    // Oculta o muestra el registro si es administrador
+    if (registerLine) {
+      registerLine.style.display = (tab.dataset.role === 'administrador') ? 'none' : '';
+    }
+
     tab.focus();
   }
 
   tabs.forEach((tab, idx) => {
-    // click
     tab.addEventListener('click', function () { activateTab(this); });
 
-    // keyboard: Enter / Space -> activate
     tab.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
@@ -95,10 +100,13 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
 
-    // visual focus class for keyboard-only users
     tab.addEventListener('focus', function () { this.classList.add('focus-visible'); });
     tab.addEventListener('blur',  function () { this.classList.remove('focus-visible'); });
   });
+
+  // Aplica reglas iniciales
+  const initialTab = document.querySelector('.role-tab.active') || tabs[0];
+  if (initialTab) activateTab(initialTab);
 });
 </script>
 {% endblock %}

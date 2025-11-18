@@ -13,13 +13,16 @@ urlpatterns = [
     # Página de inicio
     path('', TemplateView.as_view(template_name='core/inicio.html'), name='inicio'),
 
+    # 🔹 Incluye las rutas de la app usuarios
+    path('usuarios/', include('usuarios.urls')),  
+
     # Páginas específicas
     path('cliente/', TemplateView.as_view(template_name='core/cliente.html'), name='cliente'),
     path('operador/', TemplateView.as_view(template_name='core/operador.html'), name='operador'),
     path('empresa/', TemplateView.as_view(template_name='core/empresa.html'), name='empresa'),
     path('administrador/', TemplateView.as_view(template_name='core/administrador.html'), name='administrador'),
 
-    # Login y Logout (personalizados)
+    # Login y Logout (mantén estos, pero los moveremos luego a usuarios)
     path(
         'accounts/login/',
         auth_views.LoginView.as_view(template_name='core/login.html'),
@@ -27,7 +30,7 @@ urlpatterns = [
     ),
     path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
 
-    # Registro de usuarios (para resolver el error de 'register')
+    # Registro (temporal, mientras configuramos en usuarios)
     path(
         'accounts/register/',
         CreateView.as_view(
@@ -46,7 +49,7 @@ urlpatterns = [
     ),
     path(
         'accounts/password_reset/done/',
-        auth_views.PasswordResetDoneView.as_view(template_name='cores/password_reset_done.html'),
+        auth_views.PasswordResetDoneView.as_view(template_name='core/password_reset_done.html'),
         name='password_reset_done'
     ),
     path(

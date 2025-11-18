@@ -3,17 +3,13 @@
 {% block extra_head %}
   <link rel="stylesheet" href="{% static 'core/css/inicio.css' %}">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 {% endblock %}
 
 {% block content %}
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Inicio - TEN Transportes</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
 
 <body>
+
   <!-- HEADER -->
   <header class="main-header">
     <div class="header-container">
@@ -36,16 +32,15 @@
     </div>
   </header>
 
-  <!-- MAIN -->
-  <main class="page-wrap">
+  <!-- MAIN (ocupa todo el espacio restante; esto hace que el footer quede pegado al fondo) -->
+  <main class="main-content">
+
     <!-- HERO -->
     <section class="hero-banner">
       <div class="hero-inner container">
         <div class="hero-left">
-          <!-- typing effect: text in data-text -->
           <h1 class="hero-title">
             <span id="typing" data-text="Formaliza y Centraliza tu Transporte Especial en Colombia"></span>
-            <!-- cursor inserted by CSS -->
           </h1>
 
           <p class="hero-desc">
@@ -64,34 +59,41 @@
       </div>
     </section>
 
-    <!-- FEATURES -->
+    <!-- FEATURES SECTION -->
     <section class="features-section">
+
       <div class="features-box container">
+
         <h2 class="section-title">¿Por qué elegir <strong>TEN Transportes</strong>?</h2>
 
+        <!-- CARDS -->
         <div class="features-grid">
-          <article class="feature card-anim" tabindex="0">
+
+          <article class="feature card-anim">
             <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
             <h3>Cumplimiento Normativo</h3>
             <p>Documentación verificada y procesos estandarizados.</p>
           </article>
 
-          <article class="feature card-anim" tabindex="0">
+          <article class="feature card-anim">
             <div class="feature-icon"><i class="fas fa-route"></i></div>
             <h3>Trazabilidad Total</h3>
             <p>Seguimiento y registro completo de cada servicio.</p>
           </article>
 
-          <article class="feature card-anim" tabindex="0">
+          <article class="feature card-anim">
             <div class="feature-icon"><i class="fas fa-briefcase"></i></div>
             <h3>Gestión Centralizada</h3>
             <p>Contratos, facturación y documentos en una sola plataforma.</p>
           </article>
+
         </div>
 
         <!-- STEPS -->
         <div class="steps-row">
-          <div class="steps-intro">Tu viaje en 4 sencillos pasos</div>
+
+          <div class="steps-intro">Tu viaje en 4 sencillos pasos.</div>
+
           <div class="steps-numbers">
             <div class="step-block"><div class="num">1</div><div class="label">Solicita</div></div>
             <div class="step-block"><div class="num">2</div><div class="label">Compara</div></div>
@@ -103,103 +105,45 @@
             <p>¿Eres una Empresa de Transporte Especial?</p>
             <a class="btn btn-primary small" href="#">CONOCE EL MÓDULO PARA EMPRESAS</a>
           </div>
+
         </div>
       </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="site-footer">
-      <div class="container footer-inner">
-        <div class="footer-left">
-          <div class="footer-title">Información Legal</div>
-          <nav class="footer-links">
-            <a href="#">Términos y Condiciones</a>
-            <a href="#">Política de Privacidad</a>
-          </nav>
-        </div>
+  </main> <!-- /main-content -->
 
-        <div class="footer-center">
-          <div class="footer-contact">Contacto</div>
-          <div class="footer-small">soporte@tentransportes.co · +57 300 000 0000</div>
-        </div>
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner container">
 
-        <div class="footer-right">
-          <a class="btn footer-cta pulse" href="#">CONOCE EL MÓDULO PARA EMPRESAS</a>
-          <div class="socials">
-            <a href="https://twitter.com" target="_blank" class="social-link"><i class="fab fa-twitter"></i></a>
-            <a href="https://facebook.com" target="_blank" class="social-link"><i class="fab fa-facebook-f"></i></a>
-            <a href="https://instagram.com" target="_blank" class="social-link"><i class="fab fa-instagram"></i></a>
-          </div>
+      <div class="footer-col">
+        <h4>Información Legal</h4>
+        <a href="#">Términos y Condiciones</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contacto</h4>
+        <a href="#">Térrieras y Conciliaciones</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Privacidad</h4>
+        <a href="#">Política de Privacidad</a>
+      </div>
+
+      <div class="footer-col footer-actions">
+        <a class="footer-btn" href="#">CONOCE EL MÓDULO PARA EMPRESAS</a>
+
+        <div class="socials">
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
         </div>
       </div>
-    </footer>
-  </main>
 
-  <!-- SCRIPTS -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      /* ---------- NAVBAR: make link active on click (persistent on client side) ---------- */
-      document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', function (e) {
-          e.preventDefault();
-          document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-          this.classList.add('active');
-        });
-      });
+    </div>
+  </footer>
 
-      /* ---------- CARD CLICK (zapote glow) ---------- */
-      const cards = document.querySelectorAll('.card-anim');
-      cards.forEach(card => {
-        card.addEventListener('click', () => {
-          card.classList.add('clicked');
-          setTimeout(() => card.classList.remove('clicked'), 700);
-        });
-        // keyboard accessibility
-        card.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            card.classList.add('clicked');
-            setTimeout(() => card.classList.remove('clicked'), 700);
-          }
-        });
-      });
-
-      /* ---------- TYPING EFFECT (letters appear) ---------- */
-      const typeEl = document.getElementById('typing');
-      if (typeEl) {
-        const text = typeEl.dataset.text || typeEl.textContent.trim();
-        typeEl.textContent = '';
-        const cursor = document.createElement('span');
-        cursor.className = 'typing-cursor';
-        cursor.textContent = '│';
-        typeEl.parentNode.appendChild(cursor);
-
-        let i = 0;
-        const speed = 30; // ms per character
-        function type() {
-          if (i < text.length) {
-            typeEl.textContent += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-          } else {
-            // small blink after typing
-            cursor.classList.add('blink');
-            setTimeout(() => cursor.classList.remove('blink'), 1200);
-          }
-        }
-        // start typing slightly after load
-        setTimeout(type, 300);
-      }
-
-      /* ---------- BUTTONS: click feedback (small scale) ---------- */
-      document.querySelectorAll('.btn').forEach(btn => {
-        btn.addEventListener('mousedown', () => btn.classList.add('pressed'));
-        btn.addEventListener('mouseup', () => btn.classList.remove('pressed'));
-        btn.addEventListener('mouseleave', () => btn.classList.remove('pressed'));
-      });
-    });
-  </script>
 </body>
-{% endblock %}
 
-{% block extra_scripts %}{% endblock %}
+{% endblock %}
