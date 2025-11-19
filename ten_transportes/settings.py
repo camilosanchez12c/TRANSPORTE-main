@@ -58,7 +58,10 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Auth
+<<<<<<< HEAD
 #AUTH_USER_MODEL = 'usuarios.Usuario'
+=======
+>>>>>>> a60ddac0 (Primer commit del proyecto TRANSPORTE)
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
@@ -102,7 +105,11 @@ WSGI_APPLICATION = 'ten_transportes.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+<<<<<<< HEAD
         'NAME': 'transporte_db',   # el nombre de la BD
+=======
+        'NAME': 'transporte_bd',   # el nombre de la BD
+>>>>>>> a60ddac0 (Primer commit del proyecto TRANSPORTE)
         'USER': 'root',                  # el usuario MySQL 
         'PASSWORD': 'admin',    
         'HOST': 'localhost',
