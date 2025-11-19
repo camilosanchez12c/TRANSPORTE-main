@@ -56,7 +56,7 @@ def login_global(request):
                 errors["password"] = "Contraseña incorrecta."
                 return render(request, "core/login.html", {"errors": errors})
 
-            # 3. Verificar permisos de admin
+            # 3. Verificar permisos de admi
             if not user.is_superuser and not user.is_staff:
                 errors["email"] = "Este usuario no tiene permisos de administrador."
                 return render(request, "core/login.html", {"errors": errors})
