@@ -28,17 +28,17 @@
     <section class="auth-card" aria-labelledby="auth-title">
     <h1 id="auth-title" class="auth-title">Inicia Sesión</h1>
 
-<!-- ERRORES DEVUELTOS POR PYTHON -->
-{% if errors %}
-<div class="messages-box">
-    {% if errors.email %}
-        <div class="alert-message error">{{ errors.email }}</div>
+    <!-- ERRORES DEVUELTOS POR PYTHON -->
+    {% if errors %}
+    <div class="messages-box">
+        {% if errors.email %}
+            <div class="alert-message error">{{ errors.email }}</div>
+        {% endif %}
+        {% if errors.password %}
+            <div class="alert-message error">{{ errors.password }}</div>
+        {% endif %}
+    </div>
     {% endif %}
-    {% if errors.password %}
-        <div class="alert-message error">{{ errors.password }}</div>
-    {% endif %}
-</div>
-{% endif %}
 
       <ul class="role-tabs" role="tablist" aria-label="Tipo de usuario">
         <li class="role-tab active" role="tab" tabindex="0" aria-selected="true" data-role="cliente">Cliente</li>
@@ -74,15 +74,18 @@
           <button type="submit" class="btn-submit">INGRESAR</button>
         </div>
 
-        <a class="forgot-link" href="{% url 'password_reset' %}">¿Olvidaste tu contraseña?</a>
+        <!-- Enlace fijo a la ruta de password reset -->
+        <a class="forgot-link" href="/accounts/password_reset/">¿Olvidaste tu contraseña?</a>
 
-        <!-- El link se oculta según el tipo de usuario -->
-        <a id="register-link" href="{% url 'registro_cliente' %}">Regístrate aquí</a>
+        <!-- El link se oculta según el tipo de usuario; por defecto cliente -->
+        <!-- Uso rutas absolutas para evitar NoReverseMatch -->
+        <a id="register-link" href="/accounts/register/cliente/">Regístrate aquí</a>
 
       </form>
     </section>
   </div>
 </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -104,19 +107,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const rol = tab.dataset.role;
 
     // -----------------------------
-    // LÓGICA DE REGISTRO PERMITIDO
+    // LÓGICA DE REGISTRO PERMITIDO (rutas absolutas)
     // -----------------------------
     if (rol === 'cliente') {
       registerLink.style.display = 'inline';
-      registerLink.href = "{% url 'registro_cliente' %}";
+      registerLink.href = "/accounts/register/cliente/";
     }
     else if (rol === 'empresa') {
       registerLink.style.display = 'inline';
-      registerLink.href = "{% url 'registro_empresa' %}";
+      registerLink.href = "/accounts/register/empresa/";
     }
     else if (rol === 'operador') {
       registerLink.style.display = 'inline';
-      registerLink.href = "{% url 'registro_operador' %}";
+      registerLink.href = "/accounts/register/operador/";
     }
     else {
       // administrador
@@ -149,46 +152,27 @@ document.addEventListener('DOMContentLoaded', function () {
   const initialTab = document.querySelector('.role-tab.active') || tabs[0];
   activateTab(initialTab);
 
+  // Detecta mensajes de error y marca inputs
+  const errorMessages = document.querySelectorAll(".alert-message.error");
+  if (errorMessages.length > 0) {
+      const emailInput = document.querySelector("input[name='username']");
+      const passInput = document.querySelector("input[name='password']");
+
+      errorMessages.forEach(msg => {
+          const txt = msg.innerText.toLowerCase();
+          if (txt.includes("correo") || txt.includes("email") || txt.includes("usuario")) {
+              emailInput.classList.add("input-error");
+          }
+          if (txt.includes("contraseña") || txt.includes("password")) {
+              passInput.classList.add("input-error");
+          }
+          if (txt.includes("tipo seleccionado")) {
+              emailInput.classList.add("input-error");
+          }
+      });
+  }
+
 });
-
-// Detecta mensajes de error y marca inputs
-
-document.addEventListener("DOMContentLoaded", function () {
-    const errorMessages = document.querySelectorAll(".alert-message.error");
-
-    if (errorMessages.length > 0) {
-        const emailInput = document.querySelector("input[name='username']");
-        const passInput = document.querySelector("input[name='password']");
-
-        errorMessages.forEach(msg => {
-            if (msg.innerText.toLowerCase().includes("correo")) {
-                emailInput.classList.add("input-error");
-            }
-            if (msg.innerText.toLowerCase().includes("contraseña")) {
-                passInput.classList.add("input-error");
-            }
-        });
-    }
-});
-
-if (errorMessages.length > 0) {
-    const emailInput = document.querySelector("input[name='username']");
-    const passInput = document.querySelector("input[name='password']");
-
-    errorMessages.forEach(msg => {
-        if (msg.innerText.includes("correo")) {
-            emailInput.classList.add("input-error");
-        }
-        if (msg.innerText.includes("contraseña")) {
-            passInput.classList.add("input-error");
-        }
-        if (msg.innerText.includes("tipo seleccionado")) {
-            emailInput.classList.add("input-error");
-        }
-    });
-}
-
-
 </script>
 
 {% endblock %}

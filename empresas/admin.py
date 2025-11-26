@@ -3,6 +3,6 @@ from .models import Empresa
 
 @admin.register(Empresa)
 class EmpresaAdmin(admin.ModelAdmin):
-    list_display = ('nombre','nit','estado','creado')
-    list_filter = ('estado',)
-    search_fields = ('nombre','nit','representante')
+    list_display = ('id', 'nombre', 'nit', 'fecha_creacion', 'estado')  # usar id
+    list_filter = ('estado', 'ciudad')
+    search_fields = ('nombre', 'nit', 'razon_social')

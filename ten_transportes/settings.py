@@ -58,10 +58,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Auth
-<<<<<<< HEAD
-#AUTH_USER_MODEL = 'usuarios.Usuario'
-=======
->>>>>>> a60ddac0 (Primer commit del proyecto TRANSPORTE)
+DEBUG = True
+
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
@@ -105,11 +103,10 @@ WSGI_APPLICATION = 'ten_transportes.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-<<<<<<< HEAD
+
         'NAME': 'transporte_db',   # el nombre de la BD
-=======
+
         'NAME': 'transporte_bd',   # el nombre de la BD
->>>>>>> a60ddac0 (Primer commit del proyecto TRANSPORTE)
         'USER': 'root',                  # el usuario MySQL 
         'PASSWORD': 'admin',    
         'HOST': 'localhost',
@@ -143,3 +140,13 @@ STATICFILES_DIRS = [BASE_DIR / 'static']    # para desarrollo
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'inicio'
 LOGOUT_REDIRECT_URL = 'inicio'
+
+#esta parte es para lo de recuperacion de la contraseña 
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = "juancamilosanchez@unicomfacauca.edu.co"
+EMAIL_HOST_PASSWORD = "mvoo wenv trxg ggnn"  # contraseña de aplicación
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
