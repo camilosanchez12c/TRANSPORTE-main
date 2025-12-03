@@ -1,16 +1,27 @@
-from django.shortcuts import render, redirect
+from datetime import timedelta
+from django.utils import timezone
+import uuid
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.db import transaction
 from django.contrib.auth.hashers import make_password, check_password
 from django.urls import reverse
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from .models import Usuario
 from empresas.models import Empresa
 from .forms import ClienteRegistroForm, RegistroEmpresaForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+from django.conf import settings
+from django.contrib import messages
+from django.shortcuts import redirect
+from .models import Usuario
 import re
+from django.core.mail import send_mail
 
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
 # ============================================================
 #  LOGIN GLOBAL PERSONALIZADO
 # ============================================================
@@ -325,3 +336,91 @@ def validar_email(request):
 
 def cliente_view(request):
     return render(request, "core/cliente.html")
+
+
+#operador cambiar contraseña atra vez del correo 
+
+
+from .models import Usuario  # ajusta si tu import es distinto
+
+# PERFIL DEL OPERADOR
+def perfil_operador(request):
+    usuario_id = request.session.get("usuario_id")
+
+    if not usuario_id:
+        return redirect("usuarios:login")
+
+    operador = get_object_or_404(Usuario, id_usuario=usuario_id, rol_id=3)
+
+    return render(request, "operadores/perfil_operador.html", {"operador": operador})
+
+
+# ENVIAR CORREO DE CAMBIO DE CONTRASEÑA
+def operador_enviar_cambio_contrasena(request):
+    usuario_id = request.session.get("usuario_id")
+    if not usuario_id:
+        return redirect("usuarios:login")
+
+    usuario = get_object_or_404(Usuario, id_usuario=usuario_id, rol_id=3)
+
+    # generar token único
+    token = str(uuid.uuid4())
+    usuario.token_recuperacion = token
+    usuario.fecha_token = timezone.now()
+    usuario.save()
+
+    # crear link absoluto
+    link = request.build_absolute_uri(f"/accounts/reset-password/?token={token}")
+
+    # enviar correo
+    send_mail(
+        "Cambio de contraseña",
+        f"Hola {usuario.nombre},\n\n"
+        f"Puedes restablecer tu contraseña usando este enlace:\n\n{link}\n\n"
+        "Si no solicitaste esto, ignora este mensaje.",
+        settings.DEFAULT_FROM_EMAIL,
+        [usuario.email],
+        fail_silently=False,
+    )
+
+    messages.success(request, "El enlace de cambio de contraseña fue enviado a tu correo.")
+    return redirect("usuarios:perfil_operador")
+
+
+# CAMBIO DE CONTRASEÑA (TOKEN)
+def reset_password(request):
+    token = request.GET.get("token")
+    if not token:
+        return HttpResponse("Token no proporcionado.", status=400)
+
+    usuario = Usuario.objects.filter(token_recuperacion=token).first()
+    if not usuario:
+        return HttpResponse("El enlace es inválido o ya fue usado.", status=400)
+
+    # verificar expiración (30 minutos)
+    if usuario.fecha_token is None or usuario.fecha_token < timezone.now() - timedelta(minutes=30):
+        return HttpResponse("El enlace de recuperación ha expirado.", status=400)
+
+    if request.method == "POST":
+        nueva = request.POST.get("password")
+        repetir = request.POST.get("password2")
+
+        if not nueva or not repetir:
+            messages.error(request, "Todos los campos son obligatorios.")
+            return render(request, "operadores/operador_cambiar_password.html", {"token": token})
+
+        if nueva != repetir:
+            messages.error(request, "Las contraseñas no coinciden.")
+            return render(request, "operadores/operador_cambiar_password.html", {"token": token})
+
+        # guardar contraseña hasheada
+        Usuario.objects.filter(id_usuario=usuario.id_usuario).update(
+            password=make_password(nueva),
+            token_recuperacion=None,
+            fecha_token=None
+        )
+
+        messages.success(request, "La contraseña fue cambiada exitosamente. Inicia sesión con la nueva contraseña.")
+        return redirect("usuarios:login")
+
+    return render(request, "operadores/operador_cambiar_password.html", {"token": token})

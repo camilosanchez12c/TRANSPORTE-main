@@ -20,23 +20,39 @@ urlpatterns = [
     # Validar email
     path("validar_email/", views.validar_email, name="validar_email"),
 
-    # RECUPERACIÓN DE CONTRASEÑA (password reset)
+    # ==============================================
+    # 🔹 SISTEMA GLOBAL DE RECUPERACIÓN DE CONTRASEÑA
+    # ==============================================
     path('password_reset/', auth_views.PasswordResetView.as_view(
-            template_name='usuarios/password_reset_form.html',
-            email_template_name='usuarios/password_reset_email.txt',
-            subject_template_name='usuarios/password_reset_subject.txt',
-            html_email_template_name='usuarios/password_reset_email_html.html',
-        ), name='password_reset'),
+        template_name='usuarios/password_reset_form.html',
+        email_template_name='usuarios/password_reset_email.txt',
+        subject_template_name='usuarios/password_reset_subject.txt',
+        html_email_template_name='usuarios/password_reset_email_html.html',
+    ), name='password_reset'),
 
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(
-            template_name='usuarios/password_reset_done.html'
-        ), name='password_reset_done'),
+        template_name='usuarios/password_reset_done.html'
+    ), name='password_reset_done'),
 
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
-            template_name='usuarios/password_reset_confirm.html'
-        ), name='password_reset_confirm'),
+        template_name='usuarios/password_reset_confirm.html'
+    ), name='password_reset_confirm'),
 
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(
-            template_name='usuarios/password_reset_complete.html'
-        ), name='password_reset_complete'),
+        template_name='usuarios/password_reset_complete.html'
+    ), name='password_reset_complete'),
+
+    # ==============================================
+    # 🔹 CAMBIO DE CONTRASEÑA PARA OPERADOR
+    # ==============================================
+    # Este botón se usa desde el perfil del operador
+    path(
+        "operador/enviar-cambio-contrasena/",
+        views.operador_enviar_cambio_contrasena,
+        name="operador_enviar_cambio_contrasena"
+    ),
+    path("reset-password/", views.reset_password, name="reset_password"),
+    path("perfil/operador/", views.perfil_operador, name="perfil_operador"),
+
+
 ]

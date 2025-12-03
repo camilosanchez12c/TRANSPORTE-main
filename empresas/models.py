@@ -1,8 +1,12 @@
 from django.db import models
 from usuarios.models import Usuario  # tu modelo existente
+from django.contrib.auth.models import User
+from django.conf import settings
+
 
 class Empresa(models.Model):
-    id_usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
     nombre = models.CharField(max_length=255)
     nit = models.CharField(max_length=50, unique=True)
     direccion = models.CharField(max_length=255)

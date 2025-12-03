@@ -29,6 +29,7 @@ urlpatterns = [
     path('empresa/', TemplateView.as_view(template_name='core/empresa.html'), name='empresa'),
     path('administrador/', TemplateView.as_view(template_name='core/administrador.html'), name='administrador'),
     path('usuarios/', include('usuarios.urls')),
+    path('operador/', include('operadores.urls')),
 
     # RECUPERACIÓN DE CONTRASEÑA (mantengo tus rutas existentes)
     path('accounts/password_reset/', auth_views.PasswordResetView.as_view(template_name='core/password_reset_form.html'), name='password_reset'),

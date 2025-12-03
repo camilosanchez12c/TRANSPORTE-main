@@ -99,16 +99,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ten_transportes.wsgi.application'
 
-# Database (mysql worbench)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-
-        'NAME': 'transporte_db',   # el nombre de la BD
-
-        'NAME': 'transporte_bd',   # el nombre de la BD
-        'USER': 'root',                  # el usuario MySQL 
-        'PASSWORD': 'admin',    
+        'NAME': 'transporte_bd',  
+        'USER': 'root',
+        'PASSWORD': 'admin',
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {

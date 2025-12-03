@@ -104,49 +104,105 @@ const countrySelect = document.getElementById('country_code');
 const MAX_SIZE = 5 * 1024 * 1024;
 const ALLOWED_EXT = ['pdf','jpg','jpeg','png'];
 
+/* ------------------------
+   Función general para pintar campos
+-------------------------*/
+function setState(input, ok) {
+    input.classList.remove("input-error", "input-valid");
+    input.classList.add(ok ? "input-valid" : "input-error");
+}
+
+/* ------------------------
+   Validación en tiempo real básica
+-------------------------*/
+document.querySelectorAll("input[required]").forEach(input => {
+    input.addEventListener("input", () => {
+        if (input.type !== "file") {
+            setState(input, input.value.trim() !== "");
+        }
+    });
+});
+
+/* ------------------------
+   Contraseñas
+-------------------------*/
 pw2.addEventListener('input', () => {
     if (pw.value === pw2.value && pw.value !== "") {
         pwIndicator.textContent = "✅ Coinciden";
         pwIndicator.className = "pw-indicator ok";
+        setState(pw2, true);
     } else {
         pwIndicator.textContent = "❌ No coinciden";
         pwIndicator.className = "pw-indicator bad";
+        setState(pw2, false);
     }
 });
 
+/* ------------------------
+   Validación teléfono
+-------------------------*/
 function validarTelefono(phone, requiredDigits) {
     const digits = phone.replace(/\D/g,'');
     return digits.length === parseInt(requiredDigits,10);
 }
 
+telefono.addEventListener("input", () => {
+    const selected = countrySelect.options[countrySelect.selectedIndex];
+    const ok = validarTelefono(telefono.value, selected.dataset.digits);
+    setState(telefono, ok);
+});
+
+/* ------------------------
+   Validación archivo
+-------------------------*/
 function validarArchivoInput(inputEl) {
-    if (!inputEl.files.length) return {ok:false, msg:"Archivo requerido"};
     const f = inputEl.files[0];
+    if (!f) return false;
+
     const ext = f.name.split('.').pop().toLowerCase();
-    if (!ALLOWED_EXT.includes(ext)) return {ok:false, msg:"Extensión no permitida"};
-    if (f.size > MAX_SIZE) return {ok:false, msg:"Archivo mayor a 5MB"};
-    return {ok:true};
+    if (!ALLOWED_EXT.includes(ext)) return false;
+    if (f.size > MAX_SIZE) return false;
+
+    return true;
 }
 
+document.querySelectorAll("input[type='file']").forEach(fileInput => {
+    fileInput.addEventListener("change", () => {
+        setState(fileInput, validarArchivoInput(fileInput));
+    });
+});
+
+/* ------------------------
+   VALIDACIÓN FINAL AL ENVIAR
+-------------------------*/
 form.addEventListener('submit', (e) => {
     let errors = 0;
 
-    const required = form.querySelectorAll("input[required]");
-    required.forEach(input => {
-        if (input.type !== 'file' && input.value.trim() === "") {
-            input.classList.add("input-error");
+    // Campos vacíos
+    document.querySelectorAll("input[required]").forEach(input => {
+        if (input.type !== "file" && input.value.trim() === "") {
+            setState(input, false);
             errors++;
         }
     });
 
-    if (pw.value !== pw2.value) errors++;
+    // Contraseña
+    if (pw.value !== pw2.value) {
+        setState(pw2, false);
+        errors++;
+    }
 
+    // Teléfono
     const selectedOpt = countrySelect.options[countrySelect.selectedIndex];
-    if (!validarTelefono(telefono.value, selectedOpt.dataset.digits)) errors++;
+    if (!validarTelefono(telefono.value, selectedOpt.dataset.digits)) {
+        setState(telefono, false);
+        errors++;
+    }
 
-    if (!validarArchivoInput(document.getElementById('rut')).ok) errors++;
-    if (!validarArchivoInput(document.getElementById('camara')).ok) errors++;
-    if (!validarArchivoInput(document.getElementById('licencia')).ok) errors++;
+    // Archivos
+    if (!validarArchivoInput(document.getElementById('rut'))) errors++;
+    if (!validarArchivoInput(document.getElementById('camara'))) errors++;
+    if (!validarArchivoInput(document.getElementById('licencia'))) errors++;
 
     if (errors > 0) {
         e.preventDefault();

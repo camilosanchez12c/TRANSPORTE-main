@@ -4,34 +4,40 @@
 {% block title %}Dashboard Operador{% endblock %}
 
 {% block extra_head %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" crossorigin="anonymous">
-  <link rel="stylesheet" href="{% static 'core/css/operador.css' %}">
+  <link rel="stylesheet" href="{% static 'core/css/operador.css' %}?v=12">
 {% endblock %}
 
 {% block content %}
-<div class="page-root">
 
-  <!-- HEADER -->
-  <header class="header">
-    <div class="header-inner">
-      <div class="header-left">
-        <button class="toggle-sidebar" aria-label="Abrir menú">
-          <span class="hamb-bar"></span>
-          <span class="hamb-bar"></span>
-          <span class="hamb-bar"></span>
-        </button>
-        <img src="{% static 'core/img/logo.png' %}" alt="Logo" class="header-logo">
-        <h1 class="header-title">Dashboard Operador</h1>
+<div class="app-root">
+
+  <!-- TOPBAR (logo + título) -->
+  <header class="topbar">
+    <div class="topbar-inner container-fluid">
+      <div class="topbar-left d-flex align-items-center">
+        <div class="logo-badge">
+          <img src="{% static 'core/img/logo.png' %}" alt="logo" class="topbar-logo">
+        </div>
+        <h1 class="topbar-title">Dashboard Operador</h1>
       </div>
 
-      <div class="header-right">
-        <nav class="top-links" aria-label="Enlaces superiores">
+      <div class="topbar-right d-flex align-items-center">
+        <nav class="top-links">
           <a href="#" class="top-link">Empresa</a>
           <a href="#" class="top-link">Para Empresas</a>
         </nav>
-        <button class="btn btn-outline">INGRESAR</button>
-        <div class="avatar" title="Usuario">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden>
+
+        <a href="{% url 'perfil_operador' %}">
+    <button class="btn topbar-ingresar ripple">CUENTA</button>
+</a>
+
+        <button class="btn-ghost header-menu-mobile" aria-label="Abrir menú">☰</button>
+
+        <div class="avatar" title="Usuario" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden>
             <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.4"/>
             <path d="M4 20c1.5-4 14-4 16 0" stroke="currentColor" stroke-width="1.4"/>
           </svg>
@@ -40,134 +46,202 @@
     </div>
   </header>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar" role="navigation" aria-label="Menú operador">
-    <div class="sidebar-header">
-      <div class="sidebar-brand">
-        <img src="{% static 'core/img/logo.png' %}" alt="Logo" class="sidebar-brand-img">
-        <span class="sidebar-brand-text">Menú Operador</span>
-      </div>
-      <button class="close-sidebar" aria-label="Cerrar menú">&times;</button>
-    </div>
-
-    <nav class="nav">
-      <a href="#" class="nav-item active"><span class="nav-icon">🏠</span><span>Inicio</span></a>
-      <a href="#" class="nav-item"><span class="nav-icon">🧾</span><span>Vals Asignaciones</span></a>
-      <a href="#" class="nav-item"><span class="nav-icon">📋</span><span>Mis Asignaciones</span></a>
-      <a href="#" class="nav-item"><span class="nav-icon">👤</span><span>Operadores</span></a>
-      <a href="#" class="nav-item"><span class="nav-icon">🕓</span><span>Historial</span></a>
-      <a href="#" class="nav-item"><span class="nav-icon">🚐</span><span>Vehículos</span></a>
-      <a href="#" class="nav-item"><span class="nav-icon">📄</span><span>Documentos</span></a>
-      <a href="#" class="nav-item"><span class="nav-icon">📨</span><span>Solicitudes</span></a>
-      <a href="#" class="nav-item"><span class="nav-icon">⚙️</span><span>Configuración</span></a>
+  <!-- SIDEBAR (desktop) -->
+  <aside class="sidebar" aria-label="Menú operador">
+    <nav class="nav flex-column">
+      <a class="nav-item" href="#"><span class="nav-icon" aria-hidden>🏠</span><span>Inicio</span></a>
+      <a class="nav-item" href="#"><span class="nav-icon" aria-hidden>📋</span><span>Vals Asignaciones</span></a>
+      <a class="nav-item active selected-orange" href="#"><span class="nav-icon" aria-hidden>📝</span><span>Mis Solicitudes</span></a>
+      <a class="nav-item" href="#"><span class="nav-icon" aria-hidden>👥</span><span>Operadores</span></a>
+      <a class="nav-item" href="#"><span class="nav-icon" aria-hidden>⏱</span><span>Historial</span></a>
+      <a class="nav-item" href="#"><span class="nav-icon" aria-hidden>🚚</span><span>Vehículos</span></a>
+      <a class="nav-item" href="#"><span class="nav-icon" aria-hidden>📁</span><span>Documentos</span></a>
+      <a class="nav-item" href="#"><span class="nav-icon" aria-hidden>✉️</span><span>Solicitudes</span></a>
+      <a class="nav-item" href="#"><span class="nav-icon" aria-hidden>⚙️</span><span>Configuración</span></a>
     </nav>
   </aside>
 
-  <div class="sidebar-overlay"></div>
+  <!-- OFFCANVAS (mobile menu using same nav items) -->
+  <div class="offcanvas offcanvas-start" id="offcanvasSidebar" tabindex="-1" aria-hidden="true">
+    <div class="offcanvas-header">
+      <img src="{% static 'core/img/logo.png' %}" class="offcanvas-logo" alt="logo">
+      <h5>Dashboard Operador</h5>
+      <button class="btn-close" aria-label="Cerrar"></button>
+    </div>
+    <div class="offcanvas-body">
+      <nav class="nav flex-column">
+        <a class="nav-item py-2" href="#">Inicio</a>
+        <a class="nav-item py-2" href="#">Vals Asignaciones</a>
+        <a class="nav-item py-2 active" href="#">Mis Solicitudes</a>
+        <a class="nav-item py-2" href="#">Operadores</a>
+        <a class="nav-item py-2" href="#">Historial</a>
+        <a class="nav-item py-2" href="#">Vehículos</a>
+        <a class="nav-item py-2" href="#">Documentos</a>
+        <a class="nav-item py-2" href="#">Solicitudes</a>
+        <a class="nav-item py-2" href="#">Configuración</a>
+      </nav>
+    </div>
+  </div>
 
   <!-- MAIN -->
-  <main class="main" role="main">
-    <section class="content-shell">
-      <!-- KPIs -->
-      <div class="kpis-row">
-        <div class="card kpi selected">
-          <div class="kpi">
-            <h3>Asignación Actual</h3>
-            <div class="kpi-number">1</div>
+  <main class="main" id="mainContent">
+    <div class="page-shell">
+      <div class="page-panel">
+
+        <!-- KPIs + CTA layout (inspired by cliente mockup) -->
+        <div class="hero-kpi-grid">
+          <div class="kpi-area">
+            <div class="row gx-4 gy-3 align-items-start kpi-row">
+
+              <!-- CTA column -->
+              <div class="col-12 col-lg-3 d-flex align-items-start">
+                <div class="cta-wrap w-100">
+                  <button class="btn create ripple w-100">CREAR NUEVA SOLICITUD</button>
+                </div>
+              </div>
+
+              <!-- KPI cards -->
+              <div class="col-12 col-lg-9">
+                <div class="d-flex gap-3 kpis-wrap justify-content-start">
+                  <div class="card card-highlight">
+                    <h3>Solicitudes Activas</h3>
+                    <div class="kpi-number">10</div>
+                    <div class="kpi-sub">Ofertadas Activas</div>
+                  </div>
+
+                  <div class="card">
+                    <h3>Ofertas Recibidas</h3>
+                    <div class="kpi-number">36</div>
+                    <div class="kpi-sub">Ofertas por Drseh Airlines</div>
+                  </div>
+
+                  <div class="card">
+                    <h3>Viajes Recibidos</h3>
+                    <div class="kpi-number">45</div>
+                    <div class="kpi-sub">Ofertas Curso 3D Activos Hoy</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="card kpi">
-          <div class="kpi">
-            <h3>Servicios</h3>
-            <div class="kpi-number">3</div>
+        <!-- TABLE -->
+        <div class="panel table-panel mt-4">
+          <h2>Ofertas Recibidas Recientes</h2>
+          <div class="table-responsive">
+            <table class="styled-table table mb-0">
+              <thead>
+                <tr><th>ID</th><th>Ruta</th><th>Cliente</th><th>Estado</th><th>Valor</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>1</td><td>Cliente</td><td>Drivitar Logística del Sur</td><td>10</td><td><span class="dot dot-orange"></span></td></tr>
+                <tr><td>3</td><td>Fruta</td><td>Validar empresa</td><td>10</td><td><span class="dot dot-dark"></span></td></tr>
+                <tr><td>4</td><td>Fruta</td><td>Validar empresa del Suc</td><td>10</td><td><span class="dot dot-orange"></span></td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
-        <div class="card kpi">
-          <div class="kpi">
-            <h3>Completados</h3>
-            <div class="kpi-number">8</div>
-            <div class="kpi-sub">3 activos hoy</div>
+        <!-- TRIP -->
+        <div class="panel trip-panel mt-4 d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between">
+          <div class="trip-info">
+            <h2 class="mb-2">Historial de Viajes Próximos</h2>
+            <p><strong>Viaje #2024-03-20-002</strong><br>Origen: Cali - Eje Cafetero</p>
+            <p class="text-muted">Fecha y Hora: Mañana, 09:00 — Pasajeros: 10</p>
+          </div>
+
+          <div class="trip-actions mt-3 mt-md-0 d-flex gap-2">
+            <button class="btn btn-outline-outline ripple">VER OFERTA</button>
+            <button class="btn btn-primary-accent ripple">VER DETALLES</button>
           </div>
         </div>
+
       </div>
-
-      <h2 class="section-title">Próximos Servicios Asignados</h2>
-
-      <div class="big-card highlighted">
-        <div class="accent-bar"></div>
-        <div>
-          <h3>Viaje #2024-03-15-001</h3>
-          <p class="muted"><strong>Cliente:</strong> Logística del Sur</p>
-          <p class="muted"><strong>Ruta:</strong> Bogotá - Medellín</p>
-          <p class="muted"><strong>Hora:</strong> Hoy, 15:00</p>
-        </div>
-        <button class="top-cta">INICIAR SERVICIO</button>
-      </div>
-
-      <div class="table-card">
-        <h3>Otras Asignaciones Pendientes</h3>
-        <table class="data-table">
-          <thead>
-            <tr><th>ID</th><th>Ruta</th><th>Cliente</th><th>Estado</th><th>Fecha</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>1</td><td>Cliente</td><td>Logística Sur</td><td>En Curso</td><td>Hoy</td></tr>
-            <tr><td>2</td><td>Fruta</td><td>Validar empresa</td><td>Pendiente</td><td>Mañana</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <span>Privacidad</span> · <span>Términos</span>
     </div>
-  </footer>
+  </main>
 </div>
 
-<!-- SCRIPT -->
+<!-- Scripts: nav selection + ripple + offcanvas small behavior -->
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.querySelector(".sidebar");
-  const overlay = document.querySelector(".sidebar-overlay");
-  const toggle = document.querySelector(".toggle-sidebar");
-  const closeBtn = document.querySelector(".close-sidebar");
-  const navItems = document.querySelectorAll(".nav-item");
-  const kpiCards = document.querySelectorAll(".card.kpi");
+(function(){
 
-  toggle.addEventListener("click", () => {
-    sidebar.classList.toggle("open");
-    overlay.classList.toggle("visible");
-  });
-  closeBtn.addEventListener("click", () => {
-    sidebar.classList.remove("open");
-    overlay.classList.remove("visible");
-  });
-  overlay.addEventListener("click", () => {
-    sidebar.classList.remove("open");
-    overlay.classList.remove("visible");
-  });
+  // NAV selection (desktop sidebar + offcanvas)
+  const sidebarNav = document.querySelectorAll('.sidebar .nav .nav-item');
+  const offcanvasNav = document.querySelectorAll('.offcanvas .nav .nav-item');
+  const allNav = Array.from(sidebarNav).concat(Array.from(offcanvasNav));
 
-  // Animación de selección en el menú
-  navItems.forEach(item => {
-    item.addEventListener("click", () => {
-      navItems.forEach(i => i.classList.remove("active"));
-      item.classList.add("active");
+  function setActive(el){
+    // remove both active/selected-orange from all sidebar items
+    const peers = document.querySelectorAll('.sidebar .nav .nav-item');
+    peers.forEach(p => { p.classList.remove('active','selected-orange'); });
+    // set clicked (if it's in sidebar)
+    if(el.classList.contains('nav-item') && el.closest('.sidebar')){
+      el.classList.add('active','selected-orange');
+    }
+    // if clicked inside offcanvas, mirror active on desktop sidebar by index (if possible)
+    if(el.closest('.offcanvas')){
+      const idx = Array.from(el.parentNode.children).indexOf(el);
+      const peer = document.querySelectorAll('.sidebar .nav .nav-item')[idx];
+      if(peer){
+        peer.classList.add('active','selected-orange');
+      }
+    }
+  }
+
+  allNav.forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      setActive(e.currentTarget);
+      // short click animation
+      e.currentTarget.classList.remove('nav-click-animate');
+      void e.currentTarget.offsetWidth;
+      e.currentTarget.classList.add('nav-click-animate');
+    });
+    item.addEventListener('keydown', (ev) => {
+      if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); item.click(); }
     });
   });
 
-  // Animación en KPI al hacer click
-  kpiCards.forEach(card => {
-    card.addEventListener("click", () => {
-      kpiCards.forEach(c => c.classList.remove("selected"));
-      card.classList.add("selected");
-    });
+  // ensure at least one sidebar item is active on load
+  document.addEventListener('DOMContentLoaded', () => {
+    const any = document.querySelectorAll('.sidebar .nav .nav-item.active').length;
+    if(!any){
+      const first = document.querySelector('.sidebar .nav .nav-item');
+      if(first) first.classList.add('active','selected-orange');
+    }
   });
-});
+
+  // Ripple effect (delegated)
+  document.body.addEventListener('click', (e) => {
+    const btn = e.target.closest('.ripple');
+    if(!btn) return;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(prefersReduced) return;
+    const rect = btn.getBoundingClientRect();
+    const circle = document.createElement('span');
+    circle.className = 'ripple-circle';
+    const size = Math.max(rect.width, rect.height) * 1.2;
+    circle.style.width = circle.style.height = size + 'px';
+    circle.style.left = (e.clientX - rect.left - size/2) + 'px';
+    circle.style.top = (e.clientY - rect.top - size/2) + 'px';
+    btn.appendChild(circle);
+    setTimeout(()=> circle.remove(), 600);
+  });
+
+  // Basic offcanvas toggle for mobile (simple fallback if not using bootstrap)
+  const offcanvas = document.getElementById('offcanvasSidebar');
+  const openBtn = document.querySelector('.header-menu-mobile');
+  const closeBtn = offcanvas ? offcanvas.querySelector('.btn-close') : null;
+  if(openBtn && offcanvas){
+    openBtn.addEventListener('click', ()=> { offcanvas.classList.add('show'); document.body.classList.add('offcanvas-open'); });
+  }
+  if(closeBtn){
+    closeBtn.addEventListener('click', ()=> { offcanvas.classList.remove('show'); document.body.classList.remove('offcanvas-open'); });
+  }
+
+})();
 </script>
 
+<!-- Optional: if you use bootstrap's offcanvas, include its bundle in base or here -->
 {% endblock %}

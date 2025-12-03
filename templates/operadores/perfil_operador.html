@@ -1,0 +1,29 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+
+    {% if messages %}
+        {% for m in messages %}
+            <div class="alert 
+                {% if m.tags == 'success' %}alert-success
+                {% elif m.tags == 'error' %}alert-danger
+                {% else %}alert-info{% endif %}
+            ">
+                {{ m }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <h3>Datos del operador</h3>
+    <p><strong>Nombre:</strong> {{ operador.nombre }}</p>
+    <p><strong>Email:</strong> {{ operador.email }}</p>
+    <p><strong>Teléfono:</strong> {{ operador.telefono }}</p>
+
+    <a href="{% url 'usuarios:operador_enviar_cambio_contrasena' %}"
+       class="btn btn-primary mt-3 w-100">
+        Enviar enlace para cambiar contraseña
+    </a>
+
+</div>
+{% endblock %}
