@@ -1,80 +1,57 @@
-from datetime import timedelta
-from django.utils import timezone
+import re
 import uuid
-from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib import messages
-from django.db import transaction
-from django.contrib.auth.hashers import make_password, check_password
-from django.urls import reverse
-from django.http import HttpResponse, JsonResponse
-from .models import Usuario
-from empresas.models import Empresa
-from .forms import ClienteRegistroForm, RegistroEmpresaForm
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from datetime import timedelta
+
 from django.conf import settings
 from django.contrib import messages
-from django.shortcuts import redirect
-from .models import Usuario
-import re
-from django.core.mail import send_mail
-
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_encode
+from django.core.mail import send_mail
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, render, redirect
+from django.urls import reverse
+from django.utils import timezone
 from django.utils.encoding import force_bytes
-# ============================================================
-#  LOGIN GLOBAL PERSONALIZADO
-# ============================================================
+from django.utils.http import urlsafe_base64_encode
 
+from .forms import ClienteRegistroForm, RegistroEmpresaForm
+from .models import Usuario
+from empresas.models import Empresa
 
+# -------------------------
+# LOGIN GLOBAL (tu código)
+# -------------------------
 def login_global(request):
-
     errors = {}
-
     if request.method == "POST":
-        
-        email = request.POST.get("username").strip()
+        email = (request.POST.get("username") or "").strip()
         password = request.POST.get("password")
         role = request.POST.get("role")
 
-        # ====================================================
-        # 🌟 ADMINISTRADOR (usa auth_user de Django)
-        # ====================================================
+        # ADMIN (usuario django)
         if role == "administrador":
-
-            # 1. Buscar usuario por email
             try:
                 user_obj = User.objects.get(email=email)
             except User.DoesNotExist:
                 errors["email"] = "No existe un administrador con este correo."
                 return render(request, "core/login.html", {"errors": errors})
 
-            # 2. Autenticamos usando su username real
             user = authenticate(request, username=user_obj.username, password=password)
-
             if user is None:
                 errors["password"] = "Contraseña incorrecta."
                 return render(request, "core/login.html", {"errors": errors})
 
-            # 3. Verificar permisos de admi
             if not user.is_superuser and not user.is_staff:
                 errors["email"] = "Este usuario no tiene permisos de administrador."
                 return render(request, "core/login.html", {"errors": errors})
 
-            # 4. Login OK
             login(request, user)
             return redirect("administrador")
 
-        # ====================================================
-        # 🌟 OTROS ROLES -> tu tabla Usuario
-        # ====================================================
-
-        roles_dict = {
-            "cliente": 1,
-            "empresa": 2,
-            "operador": 3,
-        }
-
+        # Otros roles -> tabla Usuario
+        roles_dict = {"cliente": 1, "empresa": 2, "operador": 3}
         rol_id_esperado = roles_dict.get(role)
 
         try:
@@ -83,12 +60,10 @@ def login_global(request):
             errors["email"] = "El correo no está registrado."
             return render(request, "core/login.html", {"errors": errors})
 
-        # validar rol
         if usuario.rol_id != rol_id_esperado:
             errors["email"] = "Este usuario no pertenece al tipo seleccionado."
             return render(request, "core/login.html", {"errors": errors})
 
-        # validar contraseña
         if not check_password(password, usuario.password):
             errors["password"] = "La contraseña es incorrecta."
             return render(request, "core/login.html", {"errors": errors})
@@ -98,7 +73,6 @@ def login_global(request):
         request.session["usuario_nombre"] = usuario.nombre
         request.session["usuario_rol"] = usuario.rol_id
 
-        # redirecciones
         if usuario.rol_id == 1:
             return redirect("cliente")
         elif usuario.rol_id == 2:
@@ -107,125 +81,44 @@ def login_global(request):
             return redirect("operador")
 
     return render(request, "core/login.html")
-# ============================================================
-#  REGISTRO CLIENTE
-# ============================================================
 
+
+# -------------------------
+# REGISTROS (mantener como están)
+# -------------------------
 def registro_cliente(request):
     if request.method == 'POST':
         form = ClienteRegistroForm(request.POST)
         if form.is_valid():
-
             if Usuario.objects.filter(email=form.cleaned_data['email']).exists():
-                # añadir error al campo email y volver a mostrar el formulario
                 form.add_error('email', "Este correo ya está registrado.")
                 return render(request, 'core/registro_cliente.html', {'form': form})
 
             usuario = form.save(commit=False)
             usuario.password = make_password(form.cleaned_data['password'])
             usuario.rol_id = 1
-            usuario.is_active = 1
+            usuario.is_active = True
             usuario.save()
-
             messages.success(request, "Registro exitoso. Ahora puedes iniciar sesión.")
             return redirect("login")
     else:
         form = ClienteRegistroForm()
-
     return render(request, 'core/registro_cliente.html', {'form': form})
 
-#validaciones del perfil de cliente 
-def login_view(request):
-    if request.method == "POST":
-        email = (request.POST.get("username") or "").strip()
-        password = request.POST.get("password")
-        role = request.POST.get("role")
-
-        # VALIDACIONES BÁSICAS
-        if not email or not password:
-            messages.error(request, "Todos los campos son obligatorios.")
-            # render (no redirect) para que el mensaje se muestre en la misma respuesta
-            return render(request, "core/login.html", {"username": email, "role_selected": role})
-
-        if "@" not in email:
-            messages.error(request, "El correo no es válido.")
-            return render(request, "core/login.html", {"username": email, "role_selected": role})
-
-        # verificar si existe el usuario (en tu caso tu modelo Usuario o User de Django)
-        from usuarios.models import Usuario  # o ajusta la import si tu model está en otro módulo
-        try:
-            usuario = Usuario.objects.get(email=email)
-        except Usuario.DoesNotExist:
-            messages.error(request, "Este correo no está registrado. Por favor regístrate.")
-            return render(request, "core/login.html", {"username": email, "role_selected": role})
-
-        # validar rol (según tu esquema)
-        roles_dict = {"cliente": 1, "empresa": 2, "operador": 3, "administrador": 4}
-        rol_id_esperado = roles_dict.get(role)
-        if rol_id_esperado and usuario.rol_id != rol_id_esperado:
-            messages.error(request, "Este usuario no pertenece al tipo seleccionado.")
-            return render(request, "core/login.html", {"username": email, "role_selected": role})
-
-        # validar contraseña (tu contraseña está hasheada con make_password)
-        from django.contrib.auth.hashers import check_password
-        if not check_password(password, usuario.password):
-            messages.error(request, "La contraseña es incorrecta.")
-            return render(request, "core/login.html", {"username": email, "role_selected": role})
-
-        # validar estado
-        if not usuario.is_active:
-            messages.error(request, "Tu cuenta está desactivada. Contacta con soporte.")
-            return render(request, "core/login.html", {"username": email, "role_selected": role})
-
-        # LOGIN: guardar en sesión (tu implementación actual)
-        request.session["usuario_id"] = usuario.id_usuario
-        request.session["usuario_nombre"] = usuario.nombre
-        request.session["usuario_rol"] = usuario.rol_id
-
-        # redirigir según rol (ajusta nombres de url)
-        if usuario.rol_id == 1:
-            return redirect("cliente")
-        if usuario.rol_id == 2:
-            return redirect("empresa")
-        if usuario.rol_id == 3:
-            return redirect("operador")
-        if usuario.rol_id == 4:
-            return redirect("administrador")
-
-        return redirect("inicio")
-
-    # GET -> mostrar formulario
-    return render(request, "core/login.html")
-
-# ============================================================
-#  REGISTRO EMPRESA
-# ============================================================
 
 def registro_empresa(request):
-    """
-    Registro de empresa:
-    - crea usuario (rol empresa) inactivo
-    - crea empresa con estado pendiente
-    - guarda archivos en FileField
-    """
     if request.method == "POST":
-        print(">>> request.POST:", dict(request.POST))
-        print(">>> request.FILES:", list(request.FILES.keys()))
-
-        # datos representante
         nombre_rep = (request.POST.get("nombre_representante") or "").strip()
         email = (request.POST.get("email") or "").strip()
         telefono = (request.POST.get("telefono") or "").strip()
         password = request.POST.get("password") or ""
         password2 = request.POST.get("password2") or ""
 
-        # datos empresa
         razon_social = (request.POST.get("razon_social") or "").strip()
         nit = (request.POST.get("nit") or "").strip()
         direccion = (request.POST.get("direccion") or "").strip()
         ciudad = (request.POST.get("ciudad") or "").strip()
 
-        # archivos
         rut_file = request.FILES.get("rut")
         camara_file = request.FILES.get("camara_comercio")
         licencia_file = request.FILES.get("licencia_operacion")
@@ -241,55 +134,39 @@ def registro_empresa(request):
         if errores:
             for e in errores:
                 messages.error(request, e)
-            print(">>> errores:", errores)
             return render(request, "core/registro_empresa.html")
 
         try:
-            with transaction.atomic():
-                # usuario
-                usuario = Usuario.objects.create(
-                    nombre=nombre_rep,
-                    email=email,
-                    telefono=telefono,
-                    password=make_password(password),
-                    rol_id=2,
-                    is_active=False
-                )
-
-                # empresa
-                empresa = Empresa.objects.create(
-                    id_usuario=usuario,
-                    nombre=razon_social,
-                    nit=nit,
-                    direccion=direccion,
-                    ciudad=ciudad,
-                    estado='pendiente',
-                    rut=rut_file,
-                    camara_comercio=camara_file,
-                    licencia_operacion=licencia_file,
-                )
-
-                print(">>> Usuario creado:", usuario.id_usuario)
-                print(">>> Empresa creada:", empresa.id_empresa)
-
+            usuario = Usuario.objects.create(
+                nombre=nombre_rep,
+                email=email,
+                telefono=telefono,
+                password=make_password(password),
+                rol_id=2,
+                is_active=False
+            )
+            empresa = Empresa.objects.create(
+                id_usuario=usuario,
+                nombre=razon_social,
+                nit=nit,
+                direccion=direccion,
+                ciudad=ciudad,
+                estado='pendiente',
+                rut=rut_file,
+                camara_comercio=camara_file,
+                licencia_operacion=licencia_file,
+            )
             messages.success(request, "Registro completado. Empresa pendiente de validación.")
             return redirect("login")
-
         except Exception as exc:
-            print(">>> ERROR registro_empresa:", exc)
             messages.error(request, "Error interno al registrar la empresa")
             return render(request, "core/registro_empresa.html")
 
     return render(request, "core/registro_empresa.html")
 
 
-# ============================================================
-#  REGISTRO OPERADOR
-# ============================================================
-
 def registro_operador(request):
     if request.method == "POST":
-
         nombre = request.POST.get('nombre')
         email = request.POST.get('email')
         telefono = request.POST.get('telefono')
@@ -309,8 +186,8 @@ def registro_operador(request):
             email=email,
             telefono=telefono,
             password=make_password(password),
-            rol_id=3,  # Operador
-            is_active=1
+            rol_id=3,
+            is_active=True
         )
 
         messages.success(request, "Operador registrado correctamente.")
@@ -319,14 +196,13 @@ def registro_operador(request):
     return render(request, 'core/registro_operador.html')
 
 
-
-# ============================================================
-#  LOGOUT
-# ============================================================
-
+# -------------------------
+# LOGOUT, validar_email, cliente_view
+# -------------------------
 def logout_view(request):
-    request.session.flush()  # limpia toda la sesión
+    request.session.flush()
     return redirect("login")
+
 
 def validar_email(request):
     email = request.GET.get("email")
@@ -338,12 +214,232 @@ def cliente_view(request):
     return render(request, "core/cliente.html")
 
 
-#operador cambiar contraseña atra vez del correo 
+# -------------------------
+# PERFIL (unificado)
+# -------------------------
+def perfil(request):
+    """
+    Muestra el perfil del usuario logueado (según sesión).
+    - Si es administrador (django auth) mostramos su perfil admin (si quieres).
+    - Si es Usuario (tabla Usuario) mostramos plantilla por rol (operador -> operadores/perfil_operador.html)
+    """
+    # Si es admin autenticado con Django
+    if request.user.is_authenticated and (getattr(request.user, "is_staff", False) or getattr(request.user, "is_superuser", False)):
+        # puedes renderizar un template para admin si lo tienes
+        return render(request, "usuarios/perfil_generico.html", {"django_user": request.user})
+
+    usuario_id = request.session.get("usuario_id")
+    if not usuario_id:
+        messages.error(request, "Debes iniciar sesión.")
+        return redirect("login")
+
+    usuario = get_object_or_404(Usuario, id_usuario=usuario_id)
+
+    # según rol, usar plantilla distinta
+    if usuario.rol_id == 3:
+        return render(request, "operadores/perfil_operador.html", {"operador": usuario})
+    else:
+        # plantilla genérica para cliente/empresa u otros
+        return render(request, "usuarios/perfil_generico.html", {"usuario": usuario})
+
+# --- RECUPERAR CONTRASEÑA POR CORREO DESDE EL LOGIN ---
+# ------------------- RECUPERAR CONTRASEÑA DESDE LOGIN -------------------
+
+def recuperar_contrasena_correo(request):
+    """
+    1) Si el correo pertenece a un admin Django → usa sistema nativo con tokens oficiales.
+    2) Si pertenece a usuario normal → usa token UUID personalizado.
+    """
+    if request.method == "POST":
+        correo = request.POST.get("email")
+
+        # -------------------------
+        # 1) ADMIN (auth_user)
+        # -------------------------
+        try:
+            admin_user = User.objects.get(email=correo)
+
+            uid = urlsafe_base64_encode(force_bytes(admin_user.pk))
+            token = default_token_generator.make_token(admin_user)
+
+            link = request.build_absolute_uri(
+                reverse("password_reset_confirm", kwargs={"uidb64": uid, "token": token})
+            )
+
+            # usa tus plantillas EXISTENTES
+            mensaje_txt = render_to_string("usuarios/password_reset_email.txt", {
+                "user": admin_user,
+                "reset_link": link,
+            })
+
+            mensaje_html = render_to_string("usuarios/password_reset_email_html.html", {
+                "user": admin_user,
+                "reset_link": link,
+            })
+
+            send_mail(
+                subject="Recuperación de contraseña",
+                message=mensaje_txt,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[correo],
+                html_message=mensaje_html,
+                fail_silently=False,
+            )
+
+            messages.success(request, "Se ha enviado un enlace de recuperación a tu correo.")
+            return redirect("usuarios:login")
+
+        except User.DoesNotExist:
+            pass  # No es admin → seguimos con usuarios normales
+
+        # -------------------------
+        # 2) USUARIO NORMAL (tabla Usuario)
+        # -------------------------
+        usuario = Usuario.objects.filter(email=correo).first()
+
+        if usuario:
+            token = str(uuid.uuid4())
+            usuario.token_recuperacion = token
+            usuario.fecha_token = timezone.now()
+            usuario.save()
+
+            reset_url = reverse("usuarios:reset_password")
+            link = request.build_absolute_uri(f"{reset_url}?token={token}")
+
+            send_mail(
+                "Recuperación de contraseña",
+                (
+                    f"Hola {usuario.nombre},\n\n"
+                    f"Usa este enlace para restablecer tu contraseña:\n\n{link}\n\n"
+                    "Si no fuiste tú, ignora este mensaje."
+                ),
+                settings.DEFAULT_FROM_EMAIL,
+                [correo],
+                fail_silently=False,
+            )
+
+            messages.success(request, "Se ha enviado un enlace de recuperación a tu correo.")
+            return redirect("usuarios:login")
+
+        # -------------------------
+        # 3) No existe en ninguna tabla
+        # -------------------------
+        messages.error(request, "El correo no está registrado.")
+        return redirect("usuarios:recuperar_contrasena_correo")
+
+    return render(request, "usuarios/recuperar_contraseña_correo.html")
+
+def reset_password(request):
+    """
+    Reset de contraseña para usuarios de la tabla Usuario.
+    (Los admins ya usan el sistema oficial de Django)
+    """
+    token = request.GET.get("token")
+
+    if not token:
+        return HttpResponse("Token inválido.")
+
+    usuario = Usuario.objects.filter(token_recuperacion=token).first()
+
+    if not usuario:
+        return HttpResponse("El enlace no es válido.")
+
+    # Token caducado
+    if usuario.fecha_token and timezone.now() > usuario.fecha_token + timedelta(hours=1):
+        return HttpResponse("El enlace ha expirado.")
+
+    if request.method == "POST":
+        p1 = request.POST.get("password1")
+        p2 = request.POST.get("password2")
+
+        if p1 != p2:
+            messages.error(request, "Las contraseñas no coinciden.")
+            return render(request, "usuarios/password_reset_confirm.html", {"token": token})
+
+        # Guardar la contraseña correctamente hasheada
+        usuario.password = make_password(p1)
+        usuario.token_recuperacion = None
+        usuario.fecha_token = None
+        usuario.save()
+
+        return render(request, "usuarios/password_reset_complete.html")
+
+    return render(request, "usuarios/password_reset_confirm.html", {"token": token})
 
 
-from .models import Usuario  # ajusta si tu import es distinto
+#cambiar la clave desde el perfil del usuario 
+def cambiar_contrasena_desde_perfil(request):
+    """
+    Vista unificada para cambiar la contraseña desde el perfil.
+    Funciona para:
+      - Administradores Django
+      - Usuarios de la tabla Usuario (cliente, empresa, operador)
+    """
 
-# PERFIL DEL OPERADOR
+    # Caso 1: usuario de Django (admin)
+    if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
+        usuario_django = request.user
+        usuario_custom = None
+
+    else:
+        # Caso 2: usuario de tabla Usuario
+        usuario_id = request.session.get("usuario_id")
+
+        if not usuario_id:
+            messages.error(request, "Debes iniciar sesión.")
+            return redirect("usuarios:login")
+
+        usuario_custom = get_object_or_404(Usuario, id_usuario=usuario_id)
+        usuario_django = None
+
+    if request.method == "POST":
+
+        actual = request.POST.get("password_actual")
+        nueva = request.POST.get("password_nueva")
+        confirmar = request.POST.get("password_confirmar")
+
+        # ---------------------------
+        # ADMIN DJANGO
+        # ---------------------------
+        if usuario_django:
+
+            if not usuario_django.check_password(actual):
+                messages.error(request, "La contraseña actual es incorrecta.")
+                return redirect("usuarios:cambiar_contrasena_desde_perfil")
+
+            if nueva != confirmar:
+                messages.error(request, "Las contraseñas no coinciden.")
+                return redirect("usuarios:cambiar_contrasena_desde_perfil")
+
+            usuario_django.set_password(nueva)
+            usuario_django.save()
+
+            messages.success(request, "Contraseña actualizada correctamente.")
+            return redirect("usuarios:login")
+
+        # ---------------------------
+        # USUARIO CUSTOM (CLIENTE, EMPRESA, OPERADOR)
+        # ---------------------------
+        if usuario_custom:
+
+            if not check_password(actual, usuario_custom.password):
+                messages.error(request, "La contraseña actual es incorrecta.")
+                return redirect("usuarios:cambiar_contrasena_desde_perfil")
+
+            if nueva != confirmar:
+                messages.error(request, "Las contraseñas no coinciden.")
+                return redirect("usuarios:cambiar_contrasena_desde_perfil")
+
+            usuario_custom.password = make_password(nueva)
+            usuario_custom.save()
+
+            messages.success(request, "Contraseña actualizada correctamente.")
+            return redirect("usuarios:login")
+
+    # Renderizar página
+    return render(request, "perfiles/cambiar_contrasena_desde_perfil.html")
+
+# PERFIL DEL OPERADOR (vista dedicada)
 def perfil_operador(request):
     usuario_id = request.session.get("usuario_id")
 
@@ -353,74 +449,23 @@ def perfil_operador(request):
     operador = get_object_or_404(Usuario, id_usuario=usuario_id, rol_id=3)
 
     return render(request, "operadores/perfil_operador.html", {"operador": operador})
+#editar informacion del cliente desde el perfil de este 
 
 
-# ENVIAR CORREO DE CAMBIO DE CONTRASEÑA
-def operador_enviar_cambio_contrasena(request):
-    usuario_id = request.session.get("usuario_id")
+
+def perfil_cliente(request):
+    usuario_id = request.session.get('usuario_id')
+
     if not usuario_id:
+        messages.error(request, "Debes iniciar sesión.")
         return redirect("usuarios:login")
 
-    usuario = get_object_or_404(Usuario, id_usuario=usuario_id, rol_id=3)
-
-    # generar token único
-    token = str(uuid.uuid4())
-    usuario.token_recuperacion = token
-    usuario.fecha_token = timezone.now()
-    usuario.save()
-
-    # crear link absoluto
-    link = request.build_absolute_uri(f"/accounts/reset-password/?token={token}")
-
-    # enviar correo
-    send_mail(
-        "Cambio de contraseña",
-        f"Hola {usuario.nombre},\n\n"
-        f"Puedes restablecer tu contraseña usando este enlace:\n\n{link}\n\n"
-        "Si no solicitaste esto, ignora este mensaje.",
-        settings.DEFAULT_FROM_EMAIL,
-        [usuario.email],
-        fail_silently=False,
-    )
-
-    messages.success(request, "El enlace de cambio de contraseña fue enviado a tu correo.")
-    return redirect("usuarios:perfil_operador")
-
-
-# CAMBIO DE CONTRASEÑA (TOKEN)
-def reset_password(request):
-    token = request.GET.get("token")
-    if not token:
-        return HttpResponse("Token no proporcionado.", status=400)
-
-    usuario = Usuario.objects.filter(token_recuperacion=token).first()
-    if not usuario:
-        return HttpResponse("El enlace es inválido o ya fue usado.", status=400)
-
-    # verificar expiración (30 minutos)
-    if usuario.fecha_token is None or usuario.fecha_token < timezone.now() - timedelta(minutes=30):
-        return HttpResponse("El enlace de recuperación ha expirado.", status=400)
-
-    if request.method == "POST":
-        nueva = request.POST.get("password")
-        repetir = request.POST.get("password2")
-
-        if not nueva or not repetir:
-            messages.error(request, "Todos los campos son obligatorios.")
-            return render(request, "operadores/operador_cambiar_password.html", {"token": token})
-
-        if nueva != repetir:
-            messages.error(request, "Las contraseñas no coinciden.")
-            return render(request, "operadores/operador_cambiar_password.html", {"token": token})
-
-        # guardar contraseña hasheada
-        Usuario.objects.filter(id_usuario=usuario.id_usuario).update(
-            password=make_password(nueva),
-            token_recuperacion=None,
-            fecha_token=None
-        )
-
-        messages.success(request, "La contraseña fue cambiada exitosamente. Inicia sesión con la nueva contraseña.")
+    try:
+        cliente = Usuario.objects.get(id_usuario=usuario_id)
+    except Usuario.DoesNotExist:
+        messages.error(request, "Cliente no encontrado.")
         return redirect("usuarios:login")
 
-    return render(request, "operadores/operador_cambiar_password.html", {"token": token})
+    return render(request, "cliente/perfil_cliente.html", {
+        "cliente": cliente
+    })

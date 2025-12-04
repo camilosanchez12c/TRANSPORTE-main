@@ -1,0 +1,51 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 700px;">
+
+    <h2 class="mb-4">Mi Perfil</h2>
+
+    {% if messages %}
+        {% for m in messages %}
+            <div class="alert alert-{{ m.tags }}">{{ m }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card p-4 shadow-sm">
+        
+        {% if usuario %}
+            <h5>Nombre: {{ usuario.nombre }}</h5>
+            <p>Email: {{ usuario.email }}</p>
+            <p>Rol: 
+                {% if usuario.rol_id == 1 %}Cliente
+                {% elif usuario.rol_id == 2 %}Empresa
+                {% elif usuario.rol_id == 3 %}Operador
+                {% endif %}
+            </p>
+        {% endif %}
+
+        {% if django_user %}
+            <h5>Administrador: {{ django_user.username }}</h5>
+            <p>Email: {{ django_user.email }}</p>
+        {% endif %}
+
+        <hr>
+
+        <!-- FORM actual que ya usas para enviar enlace (NO tocar si lo usas en pruebas) -->
+        <form method="post" action="{% url 'usuarios:enviar_cambio_contrasena' %}">
+            {% csrf_token %}
+            <button class="btn btn-primary w-100">
+                Enviar enlace para cambiar contraseña
+            </button>
+        </form>
+
+        <!-- NUEVO: enlace al cambio desde perfil (no afecta al form anterior) -->
+        <a href="{% url 'usuarios:cambiar_contrasena_desde_perfil' %}"
+           class="btn btn-warning w-100 mt-3">
+            Cambiar contraseña (desde perfil)
+        </a>
+
+        <a href="{% url 'usuarios:logout' %}" class="btn btn-danger w-100 mt-3">Cerrar sesión</a>
+    </div>
+</div>
+{% endblock %}

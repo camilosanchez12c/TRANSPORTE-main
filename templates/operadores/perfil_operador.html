@@ -20,9 +20,10 @@
     <p><strong>Email:</strong> {{ operador.email }}</p>
     <p><strong>Teléfono:</strong> {{ operador.telefono }}</p>
 
-    <a href="{% url 'usuarios:operador_enviar_cambio_contrasena' %}"
-       class="btn btn-primary mt-3 w-100">
-        Enviar enlace para cambiar contraseña
+    <!-- ✔ SOLO USAMOS ESTE BOTÓN: cambio directo desde el perfil -->
+    <a href="{% url 'usuarios:cambiar_contrasena_desde_perfil' %}"
+       class="btn btn-warning mt-2 w-100">
+        Cambiar contraseña
     </a>
 
 </div>

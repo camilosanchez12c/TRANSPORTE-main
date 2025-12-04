@@ -75,7 +75,8 @@
         </div>
 
         <!-- Enlace fijo a la ruta de password reset -->
-        <a class="forgot-link" href="/accounts/password_reset/">¿Olvidaste tu contraseña?</a>
+        <a href="{% url 'usuarios:recuperar_contrasena_correo' %}">¿Olvidaste tu contraseña?</a>
+
 
         <!-- El link se oculta según el tipo de usuario; por defecto cliente -->
         <!-- Uso rutas absolutas para evitar NoReverseMatch -->
